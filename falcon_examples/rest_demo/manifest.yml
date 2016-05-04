@@ -1,0 +1,8 @@
+---
+applications:
+- name: butla-rest-demo
+  command: gunicorn app:application --bind :$VCAP_APP_PORT 
+  memory: 128M
+  buildpack: python_buildpack
+  services:
+  - butla-mongo 

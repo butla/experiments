@@ -1,0 +1,4 @@
+falcon==0.3.0
+gunicorn==19.3.0
+python-mimeparse==0.1.4
+six==1.9.0

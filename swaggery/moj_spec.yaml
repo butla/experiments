@@ -1,0 +1,43 @@
+# this is an example of the Uber API
+# as a demonstration of an API spec in YAML
+swagger: '2.0'
+info:
+  title: Moje tam api
+  description: Taka moja glupotka testowa
+  version: "0.0.1"
+
+# array of all schemes that your API supports
+schemes:
+  - http
+# will be prefixed to all paths
+produces:
+  - application/json
+paths:
+  /{num}:
+    get:
+      summary: Product Types
+      description: Jakistam opis
+      parameters:
+      - name: num
+        in: path
+        description: Po prostu liczba
+        required: true
+        type: integer
+        format: int64
+      tags:
+      - Nic
+      responses:
+        200:
+          description: To, co jest zwracane
+          schema:
+            $ref: '#/definitions/Stuff'
+
+definitions:
+  Stuff:
+    type: object
+    properties:
+      a:
+        type: integer
+        format: int32
+      b:
+        type: string

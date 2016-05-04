@@ -1,0 +1,6 @@
+---
+applications:
+- name: butla-ws-demo
+  command: python app.py
+  memory: 128M
+  buildpack: python_buildpack 
