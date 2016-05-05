@@ -8,10 +8,11 @@ from bottle import route, run
 def example():
     return 'Just some text.'
 
-def sig_handler(*_):
-    print('Caught the signal.')
-    sys.exit(0)
-
-signal.signal(signal.SIGTERM, sig_handler)
+# this would be needed if the tests closed the service with SIGTERM instead of SIGINT
+#def sig_handler(*_):
+#    print('Caught the signal.')
+#    sys.exit(0)
+#
+#signal.signal(signal.SIGTERM, sig_handler)
 
 run(port=8080)

@@ -1,3 +1,4 @@
+import signal
 import subprocess
 import sys
 import time
@@ -11,5 +12,6 @@ def test_get():
     resp = requests.get('http://localhost:8080/')
     assert resp.text == 'Just some text.'
 
-    serv_proc.terminate()
+    #serv_proc.terminate()
+    serv_proc.send_signal(signal.SIGINT)
     serv_proc.wait()
