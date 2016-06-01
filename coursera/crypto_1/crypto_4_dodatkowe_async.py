@@ -6,53 +6,69 @@ import aiohttp
 
 HTTP_CLIENT = aiohttp.ClientSession()
 
+BLOCK_SIZE = 16 
+
 @asyncio.coroutine
-def decode_last_block(cipher_int, cipher_byte_length):
+def decode_last_block(cipher_int):
     block_guess = 0
-    for block_byte in range(1,17):
+    for block_byte in range(1, BLOCK_SIZE+1):
         # 1 byte with value 1, 2 bytes with value 2, etc.
         oracle_mask = bytes([block_byte for _ in range(block_byte)])
 
-        shift = 128 + ((block_byte - 1) * 8)
         # to xor with second to last ciphertext block
-        oracle_mask_int = int.from_bytes(oracle_mask, 'big') << shift
+        oracle_mask_int = int.from_bytes(oracle_mask, 'big') << (BLOCK_SIZE*8)
+        shift = (BLOCK_SIZE*8) + ((block_byte - 1) * 8)
         increment = 1 << shift
+        #print(shift)
+        #print('{:x}'.format(increment))
+        #print('{:x}'.format(cipher_int))
+        #print('{:x}'.format(oracle_mask_int))
         
-        with aiohttp.ClientSession() as client:
-            tasks = []
-            for i in range(256):
-                guess = block_guess + (increment * i)
-                #print('{:x}'.format(guess))
-                tasks.append(asyncio.async(
-                    check_guess(guess, cipher_int, oracle_mask_int, cipher_byte_length)
-                ))
-                
-            done, _ = yield from asyncio.wait(tasks)
-            try:
-                block_guess = next(f.result() for f in done if f.result() >= 0)
-            except StopIteration:
-                raise(Exception("Couldn't find right pad for block byte {}".format(block_byte)))
-    return int.to_bytes(guess >> 128, 16, 'big')
+        tasks = []
+        for i in range(256):
+            guess = block_guess + (increment * i)
+            #print('{:x}'.format(guess))
+            tasks.append(asyncio.async(
+                check_guess(guess, cipher_int, oracle_mask_int)
+            ))
+            
+        done, _ = yield from asyncio.wait(tasks)
+        try:
+            block_guess = next(f.result() for f in done if f.result() >= 0)
+        except StopIteration:
+            raise(Exception("Couldn't find right pad for block byte {}".format(block_byte)))
+    return int.to_bytes(guess >> (BLOCK_SIZE * 8), BLOCK_SIZE, 'big')
+
 
 @asyncio.coroutine
-def check_guess(guess, cipher_int, oracle_mask_int, cipher_byte_length):
-    #print('{:x}'.format(guess))
-    #print('{:x}'.format(oracle_mask_int))
+def check_guess(guess, cipher_int, oracle_mask_int):
     guess_cipher = cipher_int ^ guess ^ oracle_mask_int
     # we just sent the original ciphertext, we don't learn anything
     if guess_cipher == cipher_int:
         return -1 
     guess_cipher_hex = hex(guess_cipher)[2:]
+    #print(guess_cipher_hex)
 
-    resp = yield from HTTP_CLIENT.get('http://crypto-class.appspot.com/po?er=' + guess_cipher_hex)
-    resp.close()
+    for _ in range(5):
+        try:
+            resp = yield from HTTP_CLIENT.get('http://crypto-class.appspot.com/po?er=' + guess_cipher_hex)
+            resp.close()
+            break
+        except:
+            print('get error')
+    else:
+        Exception("Just can't send")
+
 
     #print(resp.status)
     if resp.status in (200,404):
-        print(hex(guess))
+        print('Guessed!', hex(guess))
         return guess
     else:
+        if resp.status != 403:
+            print(resp.status)
         return -1
+
 
 @asyncio.coroutine
 def decipher():
@@ -71,7 +87,7 @@ def decipher():
 
     cipher_int = int.from_bytes(cipher, 'big')
     
-    block = yield from decode_last_block(cipher_int, len(cipher))
+    block = yield from decode_last_block(cipher_int)
     print(block)
 
     hax_time = time.perf_counter() - hax_start_time
