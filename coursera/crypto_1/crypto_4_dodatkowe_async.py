@@ -8,8 +8,14 @@ HTTP_CLIENT = aiohttp.ClientSession()
 
 BLOCK_SIZE = 16 
 
+# TODO finding the actual padding of plaintext needs to be handled somehow
+
 @asyncio.coroutine
 def decode_last_block(cipher_int):
+    # hack for the last message block
+    #block_guess = 0x090909090909090909 << (BLOCK_SIZE*8)
+    #for block_byte in range(10, BLOCK_SIZE+1):
+    
     block_guess = 0
     for block_byte in range(1, BLOCK_SIZE+1):
         # 1 byte with value 1, 2 bytes with value 2, etc.
@@ -85,10 +91,17 @@ def decipher():
 
     hax_start_time = time.perf_counter()
 
-    cipher_int = int.from_bytes(cipher, 'big')
-    
-    block = yield from decode_last_block(cipher_int)
-    print(block)
+    while True:
+        # TODO last block is "sifrage", let's skip it,
+        # we wouldn't need to if I implemented some sensible way
+        # of finding out the plaintext padding
+        cipher = cipher[:-16]
+        if not cipher:
+            break
+        cipher_int = int.from_bytes(cipher, 'big')
+
+        block = yield from decode_last_block(cipher_int)
+        print(block)
 
     hax_time = time.perf_counter() - hax_start_time
     print('Haxed in {} seconds.'.format(hax_time))
