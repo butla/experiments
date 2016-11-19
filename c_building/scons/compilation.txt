@@ -1,1 +1,0 @@
-gcc dependent_app.c -o dependent_app -lssl -lcrypto

@@ -1,4 +1,4 @@
-env = Environment(parse_flags = '-Wall -O3')
+env = Environment(parse_flags = '-g -Wall -O3')
 
 env.Program('independent_app.c')
 env.Program('dependent_app.c', LIBS=['ssl', 'crypto'])
