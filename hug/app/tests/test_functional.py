@@ -81,8 +81,8 @@ def contact_app_session(redis_port):
         waitress_path,
         '--port', '{port}',
         '--host', 'localhost', # makes waitress run offline
-        # '--call', 'contact_list.app:__hug_wsgi__']
-        'contact_list.app:__hug_wsgi__']
+        '--call', 'contact_list.app:get_app']
+        #'contact_list.app:__hug_wsgi__']
 
     this_file_dir = os.path.dirname(os.path.realpath(__file__))
     project_root_path = os.path.join(this_file_dir, '..')
@@ -131,6 +131,3 @@ def test_store_and_get_contact(contact_app):
     get_resp = requests.get(urljoin(contact_app.url, post_resp.headers['location']))
 
     assert get_resp.json() == post_resp.json()
-
-# TODO get HTML
-# TODO merge contacts?
