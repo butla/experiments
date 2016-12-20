@@ -33,31 +33,33 @@ def test_get_contact(mock_redis, test_client):
 
 def test_post_malformed_contact(test_client):
     resp = test_client.simulate_post('/contacts',
+                                     headers={'content-type': 'application/json'},
                                      body=json.dumps({'something': 'whatever'}))
     assert resp.status == hug.HTTP_400
 
 
-# TODO find out why Marshmallow rejects this
-# def test_post_contact(mock_redis, test_client, monkeypatch):
-#     contact = {
-#         'name': 'John Smith',
-#         'phone': {
-#             'mobile': '666-666-666',
-#             'work': '777-777-777',
-#         },
-#         'email': [
-#             'john@smith',
-#             'johnsmith@example.com',
-#         ]
-#     }
-#     fake_uuid = 'blablabla'
-#     contact_with_id = contact.copy()
-#     contact_with_id['id'] = fake_uuid
-#     monkeypatch.setattr('contact_list.app.uuid.uuid4', lambda: fake_uuid)
-#
-#     resp = test_client.simulate_post('/contacts',
-#                                      body=json.dumps(contact))
-#
-#     assert resp.status == hug.HTTP_201
-#     assert resp.json == contact_with_id
-#     assert call(fake_uuid, json.dumps(contact_with_id)) in mock_redis.set.mock_calls
+# TODO fails when run with other tests because of a bug in Hug?
+def test_post_contact(mock_redis, test_client, monkeypatch):
+    contact = {
+        'name': 'John Smith',
+        'phone': {
+            'mobile': '666-666-666',
+            'work': '777-777-777',
+        },
+        'email': [
+            'john@smith',
+            'johnsmith@example.com',
+        ]
+    }
+    fake_uuid = 'blablabla'
+    contact_with_id = contact.copy()
+    contact_with_id['id'] = fake_uuid
+    monkeypatch.setattr('contact_list.app.uuid.uuid4', lambda: fake_uuid)
+
+    resp = test_client.simulate_post('/contacts',
+                                     headers={'content-type': 'application/json'},
+                                     body=json.dumps(contact))
+
+    assert resp.status == hug.HTTP_201
+    assert resp.json == contact_with_id
+    assert call(fake_uuid, json.dumps(contact_with_id)) in mock_redis.set.mock_calls

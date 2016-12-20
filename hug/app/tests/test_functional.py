@@ -80,9 +80,8 @@ def contact_app_session(redis_port):
     app_command = [
         waitress_path,
         '--port', '{port}',
-        '--host', 'localhost', # makes waitress run offline
+        '--host', 'localhost', # makes waitress run the external network offline
         '--call', 'contact_list.app:get_app']
-        #'contact_list.app:__hug_wsgi__']
 
     this_file_dir = os.path.dirname(os.path.realpath(__file__))
     project_root_path = os.path.join(this_file_dir, '..')

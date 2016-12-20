@@ -9,7 +9,7 @@ import redis
 
 class Contact(Schema):
     email = fields.List(fields.Str())
-    name = fields.Str()
+    name = fields.Str(required=True)
     phone = fields.Dict()
 
 
