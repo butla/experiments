@@ -27,8 +27,12 @@ class ContactList:
         response.location = '/contacts/' + contact_id
         return contact
 
-    def get_contact(self, id: hug.types.text):
-        return self.redis_client.get(id)
+    def get_contact(self, response, id: hug.types.text):
+        contact = self.redis_client.get(id)
+        if contact:
+            return contact
+        else:
+            response.status = hug.HTTP_404
 
 
 @hug.format.content_type('application/json')

@@ -31,6 +31,12 @@ def test_get_contact(mock_redis, test_client):
     assert call(fake_uuid) in mock_redis.get.mock_calls
 
 
+def test_get_missing_contact(mock_redis, test_client):
+    mock_redis.get.return_value = None
+    resp = test_client.simulate_get('/contacts/non-existing')
+    assert resp.status == hug.HTTP_404
+
+
 def test_post_malformed_contact(test_client):
     resp = test_client.simulate_post('/contacts',
                                      headers={'content-type': 'application/json'},
