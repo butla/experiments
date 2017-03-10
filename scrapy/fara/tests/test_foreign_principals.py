@@ -2,8 +2,10 @@ from pathlib import Path
 
 import pytest
 import scrapy.http
+import scrapy.selector
 
 import fara.spiders.foreign_principals_spider as fp
+from fara.items import ForeignPrincipalItem
 
 
 @pytest.fixture
@@ -93,3 +95,25 @@ def test_get_apex_data_with_missing_ids(spider):
 
     with pytest.raises(fp.ApexDataMissingError):
         spider._get_apex_data(response)
+
+
+# I would love to do it, but I just don't have the time.
+# def test_extract_principal_from_row(spider):
+#     url =
+#     selector_text = '<tr class="even"><td headers="LINK">' \
+#                     '<a href="bla" >' \
+#                     '<img src="/i/view.gif" alt="View Documents"></a></td>' \
+#                     '<td  align="left" headers="FP_NAME">Taipei Economic & Cultural ' \
+#                     'RepresentativeOffice in the U.S.</td>' \
+#                     '<td  align="left" headers="FP_REG_DATE">08/28/1995</td>' \
+#                     '<td  align="left" headers="ADDRESS_1">Washington&nbsp;&nbsp;</td>' \
+#                     '<td  align="left" headers="STATE">DC</td>' \
+#                     '<td  align="left" headers="COUNTRY_NAME">TAIWAN</td>' \
+#                     '<td  align="left" headers="REGISTRANT_NAME">International Trade & ' \
+#                     'Development Agency, Inc.</td>' \
+#                     '<td  align="center" headers="REG_NUMBER">3690</td>' \
+#                     '<td  align="left" headers="REG_DATE">06/13/1985</td></tr>'
+#     row_selector = scrapy.selector.Selector(text=selector_text)
+#     proper_item = ForeignPrincipalItem(url=)
+#
+#      spider._get_principal_from_row(row_selector)

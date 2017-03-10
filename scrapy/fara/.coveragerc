@@ -1,0 +1,4 @@
+[run]
+source = fara
+omit =
+    fara/settings.py
