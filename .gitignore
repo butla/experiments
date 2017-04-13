@@ -1,3 +1,7 @@
+# artifact files
+*.zip
+*.pdf
+
 # VIM swap files
 *.swp
 
