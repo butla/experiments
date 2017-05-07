@@ -96,12 +96,8 @@ class ForeignPrincipalsSpider(scrapy.Spider):
         partial_form_data = {
             'p_request': 'APXWGT',
             'p_widget_num_return': '100000',
-            'f01': 'apexir_CURRENT_SEARCH_COLUMN',
-            'f01': 'apexir_SEARCH',
-            'f01': 'apexir_NUM_ROWS',
-            'f02': '',
-            'f02': '',
-            'f02': '15',
+            'f01': ['apexir_CURRENT_SEARCH_COLUMN', 'apexir_SEARCH', 'apexir_NUM_ROWS'],
+            'f02': ['', '', '15'],
             'p_widget_name': 'worksheet',
             'p_widget_mod': 'PULL',
         }
@@ -115,7 +111,6 @@ class ForeignPrincipalsSpider(scrapy.Spider):
                                  dont_filter=True)
 
     def _get_item_from_row(self, row, response):
-        # TODO insert 'null' for empty fields
         relative_url = row.css('[headers="LINK"] > a::attr(href)').extract_first()
         url = response.urljoin(relative_url)
         return ForeignPrincipalItem(
@@ -125,6 +120,7 @@ class ForeignPrincipalsSpider(scrapy.Spider):
             reg_num = row.css('[headers="REG_NUMBER"]::text').extract_first(),
             address = row.css('[headers="ADDRESS_1"]::text').extract_first(),
             foreign_principal = row.css('[headers="FP_NAME"]::text').extract_first(),
+            # TODO date as isodate
             date = row.css('[headers="FP_REG_DATE"]::text').extract_first(),
             registrant = row.css('[headers="REGISTRANT_NAME"]::text').extract_first())
 

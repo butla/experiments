@@ -1,29 +1,30 @@
 # -*- coding: utf-8 -*-
+"""The data structures (items) that we want to get from scraping."""
 
-# Define here the models for your scraped items
-#
-# See documentation in:
-# http://doc.scrapy.org/en/latest/topics/items.html
+from datetime import datetime
 
 import scrapy
 
 
+def _serialize_date(date_string):
+    """Reads the date string in format MM/DD/YYYY and serializes it as ISODate object."""
+    date = datetime.strptime(date_string, '%m/%d/%Y')
+    # TODO right now I'm just appending the 'Z' as if it was UTC time. Need to check what it is.
+    # Also, if I'd add timezone to the date object, it would dump it with a +00:00 instead of the Z
+    return f'ISODate("{date.isoformat()}Z")'
+
+
 class ForeignPrincipalItem(scrapy.Item):
-    # LINK -> a href
+    """
+    A Foreign Principal from FARA.
+    """
     url = scrapy.Field()
-    # COUNTRY_NAME
     country = scrapy.Field()
-    # STATE
     state = scrapy.Field()
-    # REG_NUMBER
     reg_num = scrapy.Field()
-    # ADDRESS_1
     address = scrapy.Field()
-    # FP_NAME
     foreign_principal = scrapy.Field()
-    # FP_REG_DATE
-    date = scrapy.Field()
-    # REGISTRANT_NAME
+    # Foreign Principal Registration Date
+    date = scrapy.Field(serializer=_serialize_date)
     registrant = scrapy.Field()
-    # DOCLINK (from view)
     exhibit_url = scrapy.Field()

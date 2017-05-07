@@ -15,5 +15,5 @@ Running the code
 ----------------
 
 - Do the steps from "Testing the code".
-- ``$ . .tox/py35/bin/activate``
+- ``$ . .tox/py36/bin/activate``
 - ``$ scrapy crawl foreign_principals -o foreign_principals.json``
