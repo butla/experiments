@@ -3,13 +3,14 @@ from itertools import chain
 import docker
 import port_for
 import pytest
+import redis
 
 IMAGE = 'redis:3.2.8-alpine'
 
 
 def download_image_if_missing(docker_client: docker.DockerClient):
     image_tags = chain(*[image.tags for image in docker_client.images.list()])
-    if not IMAGE in image_tags:
+    if IMAGE not in image_tags:
         print(f"Docker image {IMAGE} doesn't exist, downloading...")
         docker_client.images.pull(IMAGE)
 
@@ -23,8 +24,8 @@ def start_redis_container(docker_client: docker.DockerClient):
     return container, free_port
 
 
-@pytest.yield_fixture(scope='session')
-def redis_port():
+@pytest.fixture(scope='session')
+def redis_port_session():
     """Fixture that creates a Docker container with Redis for the whole test session and returns
     a port on localhost on which Redis will listen.
     """
@@ -33,3 +34,10 @@ def redis_port():
     container, redis_port_ = start_redis_container(docker_client)
     yield redis_port_
     container.remove(force=True)
+
+
+@pytest.fixture(scope='function')
+def redis_port(redis_port_session):
+    yield redis_port_session
+    redis_client = redis.Redis(port=redis_port_session)
+    redis_client.flushall()

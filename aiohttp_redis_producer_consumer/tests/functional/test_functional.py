@@ -12,9 +12,6 @@ import mountepy.mountebank
 import pytest
 
 
-def sraka_ptaka():
-    pass
-
 @pytest.fixture
 def url_to_find():
     yield 'http://example.com/just-some_url'
@@ -39,13 +36,13 @@ def fake_site_url(url_to_find: str):
         yield f'http://localhost:{site_impostor.port}'
 
 
-APP_CODE_DIR = (Path(__file__) / '../../../txodds_code_test').resolve()
+APP_CODE_DIR = (Path(__file__) / '../../../txodds_code_test').resolve()  # pylint: disable=no-member
 
 
 def _start_app_process(
         process_file: Path,
         redis_port: int,
-        args: List[str]=None) -> subprocess.Popen:
+        args: List[str] = None) -> subprocess.Popen:
     if not args:
         args = []
     return subprocess.Popen(
@@ -65,7 +62,7 @@ def _close_app_process(process: subprocess.Popen):
 
 def _wait_for_line_in_stream(stream: io.BufferedReader, timeout: float) -> str:
     """Wait for a line to appear in a stream and return it.
-    
+
     This will only work on Unix.
     If something does appear in the stream, but it isn't terminated with a newline, then this
     function will hang. But since the program that we will use this for will write its output in
@@ -79,7 +76,6 @@ def _wait_for_line_in_stream(stream: io.BufferedReader, timeout: float) -> str:
             return stream.readline()
 
 
-@pytest.mark.skip
 def test_scraping_urls_with_a_producer_and_consumer(
         fake_site_url: str,
         url_to_find: str,

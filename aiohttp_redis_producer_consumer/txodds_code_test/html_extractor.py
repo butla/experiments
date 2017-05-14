@@ -3,72 +3,81 @@ The producer's code.
 It takes URLs from the command line and puts the HTML behind them on the queue.
 """
 
-# TODO log warning when URL fails to download
-
 import argparse
 import asyncio
 import logging
-from typing import Iterable
+import traceback
+import typing
+from typing import Iterable, List
 
 import aiohttp
 import aioredis
 import async_timeout
 import uvloop
 
-HTML_QUEUE_NAME = 'html_queue'
+from . import redis_queue
 
 _log = logging.getLogger(__name__)
 
 
-# async def add_stuff(redis_pool):
-#     async with redis_pool.get() as redis:
-#         await redis.lpush(HTML_QUEUE_NAME, 'aaa')
-#         await redis.lpush(HTML_QUEUE_NAME, 'bbb')
-#         await redis.lpush(HTML_QUEUE_NAME, 'ccc')
-#         await redis.ltrim(HTML_QUEUE_NAME, 0, 4)
-#
-#         print(await redis.lrange(HTML_QUEUE_NAME, 0, -1))
-#
-#
-# async def get_url(redis_client):
-#     async with aiohttp.ClientSession() as session:
-#         # TODO check timeout or not 200 response
-#         with async_timeout.timeout(10):
-#             async with session.get('http://python.org') as response:
-#                 html = await response.text()
-#                 await redis_client.lpush(HTML_QUEUE_NAME, html)
-#                 print(await redis_client.lrange(HTML_QUEUE_NAME, 0, -1))
-
-
-async def _fetch_url(url: str, session: aiohttp.ClientSession, timeout: float = 10.0):
+async def _fetch_url(
+        url: str,
+        session: aiohttp.ClientSession,
+        timeout: float = 10.0) -> str:
+    # try:
     with async_timeout.timeout(timeout):
         async with session.get(url) as response:
             response.raise_for_status()
             return await response.text()
+    # except asyncio.TimeoutError:
+    #     _log.exception('Getting %s timeout out after %s seconds.', url, timeout)
+    #     raise
+    # except aiohttp.ClientResponseError:
+    #     _log.exception('Error on GET request to %s', url)
+    #     raise
 
 
 async def _fetch_and_queue_html(
         url: str,
         session: aiohttp.ClientSession,
         redis_pool: aioredis.RedisPool):
-    # TODO catch exceptions here: timeout, not 200; log them
-    # TODO log error if not 200 aiohttp.ClientResponseError
+    _log.debug('Fetching %s...', url)
     html = await _fetch_url(url, session)
-    # TODO this should be a separate function (maybe of a class)
-    async with redis_pool.get() as redis_client:
-        await redis_client.lpush(HTML_QUEUE_NAME, html)
-        await redis_client.ltrim(HTML_QUEUE_NAME, 0, 4)
+    _log.debug('Putting the HTML behind %s on the queue...', url)
+    await redis_queue.push(redis_pool, html)
+    _log.info('HTML from %s successfully put on the queue.', url)
 
 
-async def _fetch_urls_and_queue_html(urls: Iterable[str], redis_pool: aioredis.RedisPool):
-    # TODO make docstring better
-    """Some may fail, they will be logged
+class _UrlFetchResult(typing.NamedTuple):
     """
+    A result of a single URL fetch. If it was successful, error will be None.
+    """
+    url: str
+    error: Exception
+
+
+async def _fetch_and_queue_html_for_urls(
+        redis_pool: aioredis.RedisPool,
+        urls: Iterable[str]) -> List[_UrlFetchResult]:
     async with aiohttp.ClientSession() as session:
         fetch_futures = [_fetch_and_queue_html(url, session, redis_pool)
                          for url in urls]
-        # TODO test that exceptions are handled
-        await asyncio.gather(*fetch_futures, return_exceptions=True)
+        results = await asyncio.gather(*fetch_futures, return_exceptions=True)
+    return [_UrlFetchResult(url, error) for url, error in zip(urls, results)]
+
+
+def _log_results(url_fetch_results: Iterable[_UrlFetchResult]):
+    all_fetches = len(url_fetch_results)
+    bad_fetches = [result for result in url_fetch_results if result.error]
+    _log.info('%s out of %s fetches were successful', all_fetches - len(bad_fetches), all_fetches)
+    if bad_fetches:
+        _log.error('Failed to fetch and queue HTML for urls: %s',
+                   ', '.join(result.url for result in bad_fetches))
+        for bad_fetch in bad_fetches:
+            err = bad_fetch.error
+            _log.error('URL %s fetch failure:\n%s',
+                       bad_fetch.url,
+                       traceback.format_exception(type(err), err, err.__traceback__))
 
 
 async def produce_html_on_queue(
@@ -81,9 +90,10 @@ async def produce_html_on_queue(
     redis_pool = await aioredis.create_pool((redis_host, redis_port))
 
     _log.info('Fetching HTML from urls: %s', ', '.join(urls))
-    await _fetch_urls_and_queue_html(urls, redis_pool)
+    url_fetch_results = await _fetch_and_queue_html_for_urls(redis_pool, urls)
+    _log_results(url_fetch_results)
 
-    _log.info('Closing...')
+    _log.info('Closing redis connection pool...')
     redis_pool.close()
     await redis_pool.wait_closed()
 
@@ -101,7 +111,7 @@ def _create_cli_parser():
 
 
 def main():
-    """Run the HTML extractor (the producer). 
+    """Run the HTML extractor (the producer).
     """
     logging.basicConfig(
         level=logging.INFO,
