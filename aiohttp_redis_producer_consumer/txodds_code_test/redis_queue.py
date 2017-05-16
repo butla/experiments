@@ -4,6 +4,9 @@ A Redis-based queue for the HTML payloads.
 I'm aware of the rq project (http://python-rq.org/), but's it's more of a job queue.
 """
 
+import json
+import typing
+
 import aioredis
 
 # So the queue doesn't get too long. I haven't thought long about this number,
@@ -13,47 +16,33 @@ QUEUE_LENGTH = 1000
 QUEUE_NAME = 'html_queue'
 
 
-# class RedisHtmlQueue:
-#     """
-#     A Redis-based queue for the HTML payloads.
-#
-#     I'm aware of the rq project (http://python-rq.org/), but's it's more of a job queue.
-#     """
-#
-#     def __init__(self,
-#                  redis_host: str,
-#                  redis_port: int,
-#                  queue_length: int = 1000,
-#                  queue_name: str = 'html_queue'):
-#         # So the queue doesn't get too long. I haven't thought long about this number,
-#         # it's just to show queue size limiting.
-#         self.queue_length = queue_length
-#         self.queue_name = queue_name
-#         self._redis_host = redis_host
-#         self._redis_port = redis_port
-#         self._redis_pool = None
-#
-#         self._log = logging.getLogger(self.__class__.__name__)
-#
-#     async def __aenter__(self):
-#         self._log.info('Creating a pool of connections to Redis at %s:%d.',
-#                        self._redis_host, self._redis_port)
-#     redis_pool = await aioredis.create_pool((redis_host, redis_port))
-#
-#     async def __aexit__(self, exc_type, exc_val, exc_tb):
-#         pass
+class HtmlPayload(typing.NamedTuple):
+    """
+    A HTML payload and the URL it originated from.
+    """
+    url: str
+    html: str
+
 
 async def push(redis_pool: aioredis.RedisPool,
-               payload: str,
+               originating_url: str,
+               html: str,
                max_length: int = QUEUE_LENGTH):
     """Push a payload onto the queue.
     """
     async with redis_pool.get() as redis_client:
-        await redis_client.lpush(QUEUE_NAME, payload)
+        payload = HtmlPayload(url=originating_url, html=html)
+        await redis_client.lpush(QUEUE_NAME, json.dumps(payload))
         await redis_client.ltrim(QUEUE_NAME, 0, max_length-1)
 
 
-async def pop(redis_pool: aioredis.RedisPool) -> str:
+class QueueEmptyError(Exception):
+    """
+    When attempting to pop from an empty Redis queue.
+    """
+
+
+async def pop(redis_pool: aioredis.RedisPool) -> HtmlPayload:
     """Pop payload from the queue.
 
     For the application to be truly robust we should use RPOPLPUSH
@@ -64,4 +53,8 @@ async def pop(redis_pool: aioredis.RedisPool) -> str:
     """
     async with redis_pool.get() as redis_client:
         payload = await redis_client.rpop(QUEUE_NAME)
-        return payload.decode()
+        if payload:
+            payload_json = json.loads(payload.decode())
+            return HtmlPayload(*payload_json)
+        else:
+            raise QueueEmptyError()

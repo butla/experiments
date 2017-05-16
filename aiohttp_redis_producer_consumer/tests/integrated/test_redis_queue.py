@@ -1,4 +1,5 @@
 import asyncio
+import json
 
 import aioredis
 import pytest
@@ -17,25 +18,33 @@ def redis_pool(event_loop: asyncio.AbstractEventLoop, redis_port: int):
 
 @pytest.mark.asyncio
 async def test_push_to_queue(redis_pool):
-    dummy_payload = 'something'
-    await redis_queue.push(redis_pool, dummy_payload)
+    dummy_html = 'something'
+    url = 'http://exmple.com'
+
+    await redis_queue.push(redis_pool, url, dummy_html)
+
     async with redis_pool.get() as redis_client:
-        assert await redis_client.lpop(redis_queue.QUEUE_NAME) == dummy_payload.encode()
+        saved_payload = await redis_client.lpop(redis_queue.QUEUE_NAME)
+        assert json.loads(saved_payload.decode()) == [url, dummy_html]
 
 
 @pytest.mark.asyncio
 async def test_pop_from_queue(redis_pool):
-    dummy_payload = 'something'
+    payload = redis_queue.HtmlPayload('dummy-url', 'dummy-html')
     async with redis_pool.get() as redis_client:
-        assert await redis_client.lpush(redis_queue.QUEUE_NAME, dummy_payload)
-    assert await redis_queue.pop(redis_pool) == dummy_payload
+        assert await redis_client.lpush(redis_queue.QUEUE_NAME, json.dumps(payload))
+
+    assert await redis_queue.pop(redis_pool) == payload
 
 
 @pytest.mark.asyncio
 async def test_push_to_queue_over_the_limit(redis_pool):
-    dummy_payloads = ['xxx', 'yyy', 'zzz']
-    for payload in dummy_payloads:
-        await redis_queue.push(redis_pool, payload, max_length=2)
+    dummys = ['xxx', 'yyy', 'zzz']
+
+    for dummy in dummys:
+        await redis_queue.push(redis_pool, dummy, dummy, max_length=2)
+
     async with redis_pool.get() as redis_client:
-        proper_final_payloads = [b'zzz', b'yyy']
-        assert await redis_client.lrange(redis_queue.QUEUE_NAME, 0, -1) == proper_final_payloads
+        saved_payloads = await redis_client.lrange(redis_queue.QUEUE_NAME, 0, -1)
+        proper_saved_payloads = [b'["zzz", "zzz"]', b'["yyy", "yyy"]']
+        assert saved_payloads == proper_saved_payloads

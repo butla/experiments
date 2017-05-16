@@ -3,7 +3,6 @@ The producer's code.
 It takes URLs from the command line and puts the HTML behind them on the queue.
 """
 
-import argparse
 import asyncio
 import logging
 import traceback
@@ -13,28 +12,20 @@ from typing import Iterable, List
 import aiohttp
 import aioredis
 import async_timeout
-import uvloop
 
-from . import redis_queue
+from . import app_cli, redis_queue
 
-_log = logging.getLogger(__name__)
+_log = logging.getLogger('html_extractor')
 
 
 async def _fetch_url(
         url: str,
         session: aiohttp.ClientSession,
         timeout: float = 10.0) -> str:
-    # try:
     with async_timeout.timeout(timeout):
         async with session.get(url) as response:
             response.raise_for_status()
             return await response.text()
-    # except asyncio.TimeoutError:
-    #     _log.exception('Getting %s timeout out after %s seconds.', url, timeout)
-    #     raise
-    # except aiohttp.ClientResponseError:
-    #     _log.exception('Error on GET request to %s', url)
-    #     raise
 
 
 async def _fetch_and_queue_html(
@@ -44,7 +35,7 @@ async def _fetch_and_queue_html(
     _log.debug('Fetching %s...', url)
     html = await _fetch_url(url, session)
     _log.debug('Putting the HTML behind %s on the queue...', url)
-    await redis_queue.push(redis_pool, html)
+    await redis_queue.push(redis_pool, url, html)
     _log.info('HTML from %s successfully put on the queue.', url)
 
 
@@ -98,30 +89,17 @@ async def produce_html_on_queue(
     await redis_pool.wait_closed()
 
 
-def _create_cli_parser():
-    parser = argparse.ArgumentParser(
-        description='Get the HTML behind the given URLs and put it on a Redis queue.')
-    parser.add_argument('redis_host', metavar='REDIS_HOST', type=str,
-                        help='IP address or hostname of a Redis instance.')
-    parser.add_argument('redis_port', metavar='REDIS_PORT', type=int,
-                        help='Port of a Redis instance on the given address.')
-    parser.add_argument('urls', metavar='URL', type=str, nargs='+',
-                        help='URLs from which HTML will be fetched.')
-    return parser
-
-
 def main():
     """Run the HTML extractor (the producer).
     """
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s %(levelname)s %(name)s: %(message)s')
-    # for free speed-up on CPython
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+    app_cli.setup_logging()
+    args_parser = app_cli.get_redis_args_parser(
+        'Get the HTML behind the given URLs and put it on a Redis queue.')
+    args_parser.add_argument('urls', metavar='URL', type=str, nargs='+',
+                             help='URLs from which HTML will be fetched.')
+    args = args_parser.parse_args()
 
-    args = _create_cli_parser().parse_args()
-
-    loop = asyncio.get_event_loop()
+    loop = app_cli.get_event_loop()
     loop.run_until_complete(
         produce_html_on_queue(args.redis_host, args.redis_port, args.urls))
 
