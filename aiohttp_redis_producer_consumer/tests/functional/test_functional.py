@@ -1,6 +1,7 @@
 import io
 import json
 import select
+import signal
 import subprocess
 import sys
 import time
@@ -46,7 +47,9 @@ def _wait_for_line_in_stream(stream: io.BufferedReader, timeout: float) -> str:
 
 
 def _close_app_process(process: subprocess.Popen):
-    process.terminate()
+    # SIGINT instead of terminate,
+    # so that subprocess coverage works without special signal handling
+    process.send_signal(signal.SIGINT)
     try:
         process.wait(3)
     except subprocess.TimeoutExpired:
@@ -58,15 +61,15 @@ def test_scraping_urls_with_a_producer_and_consumer(
         fake_site_url: str,
         url_to_find: str,
         redis_port: int):
-    html_extractor_process = subprocess.Popen(
-        [sys.executable, '-m', 'txodds_code_test.html_extractor',
-         'localhost', str(redis_port), fake_site_url])
-    html_extractor_process.wait(3)
-
     url_extractor_process = subprocess.Popen(
         [sys.executable, '-m', 'txodds_code_test.url_extractor', 'localhost', str(redis_port)],
         stdout=subprocess.PIPE)
     try:
+        html_extractor_process = subprocess.Popen(
+            [sys.executable, '-m', 'txodds_code_test.html_extractor',
+             'localhost', str(redis_port), fake_site_url])
+        html_extractor_process.wait(3)
+
         json_output_line = _wait_for_line_in_stream(url_extractor_process.stdout, 3)
         assert {fake_site_url: [url_to_find]} == json.loads(json_output_line)
     finally:

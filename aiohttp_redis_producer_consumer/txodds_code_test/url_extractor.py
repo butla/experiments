@@ -36,9 +36,7 @@ def _scrape_urls(html: str, base_url: str) -> List[str]:
             for link in soup.find_all('a') if link.has_attr(href)]
 
 
-async def _scrape_urls_from_queued_html(redis_host: str, redis_port: int):
-    _log.info('Creating a pool of connections to Redis at %s:%d.', redis_host, redis_port)
-    redis_pool = await aioredis.create_pool((redis_host, redis_port))
+async def _scrape_urls_from_queued_html(redis_pool: aioredis.RedisPool):
     _log.info('Processing HTML from queue...')
     while True:
         try:
@@ -49,11 +47,11 @@ async def _scrape_urls_from_queued_html(redis_host: str, redis_port: int):
             _log.info('Scraped URIs from URL %s', html_payload.url)
 
             output_json = {html_payload.url: scraped_urls}
-            print(json.dumps(output_json))
+            # flush for anyone who is watching the stream
+            print(json.dumps(output_json), flush=True)
         except redis_queue.QueueEmptyError:
             # wait for work to become available
-            await asyncio.sleep(1)
-    # not closing the redis pool since the process needs to be terminated to stop anyway
+            await asyncio.sleep(1)  # pragma: no cover
 
 
 def main():
@@ -64,10 +62,14 @@ def main():
         'Start a worker that will get URL/HTML pairs from a Redis queue and for each of those '
         'pairs output (on separate lines) a JSON in format {ORIGINATING_URL: [FOUND_URLS_LIST]}')
     args = args_parser.parse_args()
-
     loop = app_cli.get_event_loop()
-    loop.run_until_complete(
-        _scrape_urls_from_queued_html(args.redis_host, args.redis_port))
+
+    _log.info('Creating a pool of connections to Redis at %s:%d.',
+              args.redis_host, args.redis_port)
+    # the pool won't be closed explicitly, since the process needs to be terminated to stop anyway
+    redis_pool = loop.run_until_complete(
+        aioredis.create_pool((args.redis_host, args.redis_port)))
+    loop.run_until_complete(_scrape_urls_from_queued_html(redis_pool))
 
 
 if __name__ == '__main__':
