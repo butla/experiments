@@ -1,11 +1,6 @@
-# TODO
-# * normal output
-# * structured output
-
 import logging
 
 import structlog
-import structlog.stdlib
 
 import some_lib
 
@@ -25,8 +20,11 @@ if __name__ == '__main__':
         "It's from the independent structured logger!",
         some_key='some_value')
 
-    structlog.configure(logger_factory=structlog.stdlib.LoggerFactory())
+    structlog.configure(
+        logger_factory=structlog.stdlib.LoggerFactory(),
+        context_class=structlog.threadlocal.wrap_dict(dict))
     structured_log = structlog.get_logger() 
+    structured_log = structured_log.bind(bound='something_bound')
     structured_log.info(
         "It's from the tied in structured logger!",
         some_key='some_other_value')
