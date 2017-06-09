@@ -2,7 +2,8 @@ import logging.config
 from os import path
 import sys
 
-import google.cloud.logging as google_logging
+from google.cloud import logging as google_logging
+import google.cloud.logging.handlers as google_logging_handlers
 import structlog
 
 import some_lib
@@ -15,7 +16,7 @@ def cause_error():
     raise ValueError("It's just an error")
 
 
-if __name__ == '__main__':
+def _configure_logging(log_level):
     # TODO timestamping should be done by the log aggregator/sender
     timestamper = structlog.processors.TimeStamper(fmt="iso")
     # processing for the messages from the standard lib's logger
@@ -27,43 +28,29 @@ if __name__ == '__main__':
         structlog.processors.format_exc_info,
     ]
 
-    logging.config.dictConfig({
-        "version": 1,
-        "disable_existing_loggers": False,
-        "formatters": {
-            "structured": {
-                "()": structlog.stdlib.ProcessorFormatter,
-                "processor": structlog.dev.ConsoleRenderer(colors=False),
-                "foreign_pre_chain": pre_chain,
-            },
-        },
-        "handlers": {
-            "default": {
-                "class": "logging.StreamHandler",
-                "stream": sys.stdout,
-                "formatter": "structured",
-            },
-            "stackdriver": {
-                "class": "google.cloud.logging.handlers.CloudLoggingHandler",
-                "client": google_logging.Client(),
-                "name": path.basename(__file__),
-                #"formatter": "structured",
-            },
-        },
-        "loggers": {
-            "": {
-                "handlers": ["default", "stackdriver"],
-                "level": "INFO",
-                "propagate": True,
-            },
-        }
-    })
+    console_formatter = structlog.stdlib.ProcessorFormatter(
+        processor=structlog.dev.ConsoleRenderer(colors=False),
+        foreign_pre_chain=pre_chain
+    )
+
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(console_formatter)
+
+    stackdriver_handler = google_logging_handlers.CloudLoggingHandler(
+        client=google_logging.Client(),
+        name=path.basename(__file__)
+    )
+
+    root_logger = logging.getLogger()
+    root_logger.setLevel(log_level)
+    root_logger.addHandler(console_handler)
+    root_logger.addHandler(stackdriver_handler)
 
     structlog.configure(
         # TODO log level and timestamp should be omitted, because Stackdriver adds them,
         # but we want them in the console output and that doesn't happen if they're not here.
         # Need to investigate.
-	    processors=[
+        processors=[
             structlog.stdlib.filter_by_level,
             structlog.stdlib.add_log_level,
             structlog.stdlib.add_logger_name,
@@ -76,7 +63,12 @@ if __name__ == '__main__':
         logger_factory=structlog.stdlib.LoggerFactory(),
         wrapper_class=structlog.stdlib.BoundLogger,
         context_class=structlog.threadlocal.wrap_dict(dict),
-        cache_logger_on_first_use=True)
+        cache_logger_on_first_use=True
+    )
+
+
+if __name__ == '__main__':
+    _configure_logging(logging.INFO)
     structured_log = structlog.get_logger() 
     structured_log = structured_log.bind(bound='something_bound')
     structured_log.info(
