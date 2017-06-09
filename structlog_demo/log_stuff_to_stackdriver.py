@@ -16,6 +16,12 @@ def cause_error():
     raise ValueError("It's just an error")
 
 
+def _log_uncaught_exception(exc_type, exc_value, exc_traceback):
+    structlog.get_logger().error(
+        "Uncaught error",
+        exc_info=(exc_type, exc_value, exc_traceback))
+
+
 def _configure_logging(log_level):
     # TODO timestamping should be done by the log aggregator/sender
     timestamper = structlog.processors.TimeStamper(fmt="iso")
@@ -65,6 +71,8 @@ def _configure_logging(log_level):
         context_class=structlog.threadlocal.wrap_dict(dict),
         cache_logger_on_first_use=True
     )
+
+    sys.excepthook = _log_uncaught_exception
 
 
 if __name__ == '__main__':
