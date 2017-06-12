@@ -1,9 +1,8 @@
 import logging
-from os import path
+import platform
 
+import fluent.handler
 import structlog
-import google.cloud.logging
-import google.cloud.logging.handlers
 
 import log_config
 import some_lib
@@ -11,14 +10,22 @@ import some_lib
 _log = logging.getLogger(__name__)
 
 
-def add_stackdriver_logging():
-    stackdriver_handler = google.cloud.logging.handlers.CloudLoggingHandler(
-        client=google.cloud.logging.Client(),
-        name=path.basename(__file__),
-    )
+def add_fluentd_logging():
+    format_for_nonstructured_messages = {
+        'event': '%(message)s',
+        #'message': '%(event)s',
+        'logger': '%(name)s',
+        'level': '%(levelname)s',
+        'stack_trace': '%(exc_text)s'
+    }
+
+    fluentd_handler = fluent.handler.FluentHandler(
+        'test_app', host=platform.node())
+    fluentd_handler.setFormatter(
+        fluent.handler.FluentRecordFormatter(fmt=format_for_nonstructured_messages))
 
     root_logger = logging.getLogger()
-    root_logger.addHandler(stackdriver_handler)
+    root_logger.addHandler(fluentd_handler)
 
 
 def cause_error():
@@ -28,7 +35,7 @@ def cause_error():
 
 if __name__ == '__main__':
     log_config.configure_logging(logging.INFO)
-    add_stackdriver_logging()
+    add_fluentd_logging()
 
     structured_log = structlog.get_logger() 
     structured_log = structured_log.bind(bound='something_bound')
