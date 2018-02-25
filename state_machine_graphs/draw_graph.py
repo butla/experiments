@@ -71,10 +71,10 @@ def create_uploader_graph() -> networkx.DiGraph:
 
 def draw_graph(graph):
     graph_file = 'graph.dot'
-    graph_pdf_file = 'graph.pdf'
+    graph_diagram_file = 'graph.svg'
     write_dot(graph, graph_file)
-    subprocess.check_output(f'dot -Tpdf {graph_file} -o {graph_pdf_file}'.split())
-    subprocess.check_output(f'okular {graph_pdf_file}'.split())
+    subprocess.check_output(f'dot -Tsvg {graph_file} -o {graph_diagram_file}'.split())
+    subprocess.check_output(f'gwenview {graph_diagram_file}'.split())
 
 if __name__ == '__main__':
     draw_graph(create_uploader_graph())
