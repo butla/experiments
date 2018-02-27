@@ -65,12 +65,11 @@ class StateMachine:
 
 
 def draw_uploader_graph() -> networkx.DiGraph:
-    sd = 'STOPPED'
-    w = 'WAITING'
-    u = 'UPLOADING'
-    sg = 'STOPPING'
-    invalid = 'INVALID/ERROR'
-    states = [sd, w, u, sg, invalid]
+    # states
+    stopped = 'STOPPED'
+    upload_scheduled = 'UPLOAD_SCHEDULED'
+    uploading = 'UPLOADING'
+    uploading_before_stop = 'UPLOADING_BEFORE_STOP'
 
     # triggers or inputs, or actions
     add_event = 'add event'
@@ -79,26 +78,25 @@ def draw_uploader_graph() -> networkx.DiGraph:
     stop = 'stop'
     upload_finished = 'upload finished'
     interval_over = 'interval over'
-    triggers = [add_event, add_event_queue_full, start, stop, upload_finished, interval_over]
 
     # outputs or side effects
     upload = 'upload'
     schedule_upload = 'schedule upload'
     cancel_scheduled = 'cancel scheduled upload'
-    outputs = [upload, schedule_upload, cancel_scheduled]
+    throw_error = 'throw error'
 
     m = StateMachine('uploader')
-    m.add_transition(sd, start, w, schedule_upload)
+    m.add_transition(stopped, start, upload_scheduled, schedule_upload)
 
-    m.add_transition(w, add_event_queue_full, u, upload, cancel_scheduled)
-    m.add_transition(w, interval_over, u, upload)
-    m.add_transition(w, stop, sg, upload, cancel_scheduled)
+    m.add_transition(upload_scheduled, add_event_queue_full, uploading, upload, cancel_scheduled)
+    m.add_transition(upload_scheduled, interval_over, uploading, upload)
+    m.add_transition(upload_scheduled, stop, uploading_before_stop, upload, cancel_scheduled)
 
-    m.add_transition(u, stop, sg)
-    m.add_transition(u, upload_finished, w, schedule_upload)
+    m.add_transition(uploading, stop, uploading_before_stop)
+    m.add_transition(uploading, upload_finished, upload_scheduled, schedule_upload)
 
-    m.add_transition(sg, upload_finished, sd)
-    m.add_transition(sg, add_event, invalid)
+    m.add_transition(uploading_before_stop, upload_finished, stopped)
+    m.add_transition(uploading_before_stop, add_event, uploading_before_stop, throw_error)
 
     m.show_graph()
 
