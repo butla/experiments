@@ -102,5 +102,38 @@ def draw_uploader_graph() -> networkx.DiGraph:
 
     m.show_graph()
 
+
+def draw_buffer_graph() -> networkx.DiGraph:
+    # triggers or inputs, or actions
+    take_batch = 'take_batch'
+    delete_batch = 'delete_batch'
+    add = 'add'
+    add_full_batch = 'add, full batch ready'
+    add_buffer_full = 'add, buffer full'
+
+    # states
+    neutral = 'NEUTRAL'
+    batch_taken = 'BATCH TAKEN'
+    invalid = 'INVALID/ERROR'
+
+    # outputs or side effects
+    notify_batch_ready = 'notify batch ready'
+    clear_out_succesfull_events = 'delete succesfull events'
+    drop_new_event = 'drop new event'
+    mark_batch_for_deletion = 'mark batch for deletion'
+
+    m = StateMachine('events_buffer')
+    m.add_transition(neutral, take_batch, batch_taken, mark_batch_for_deletion)
+    m.add_transition(neutral, add_full_batch, neutral, notify_batch_ready)
+    m.add_transition(neutral, add_buffer_full, neutral, drop_new_event)
+    m.add_transition(neutral, delete_batch, invalid)
+
+    m.add_transition(batch_taken, take_batch, batch_taken, mark_batch_for_deletion)
+    m.add_transition(batch_taken, add_buffer_full, batch_taken, drop_new_event)
+    m.add_transition(batch_taken, delete_batch, neutral, clear_out_succesfull_events)
+
+    m.show_graph()
+
 if __name__ == '__main__':
     draw_uploader_graph()
+    draw_buffer_graph()
