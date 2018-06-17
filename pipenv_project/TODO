@@ -1,0 +1,34 @@
+TODO: 
+=====
+- Run tests without any virtualenv setup - FAILED - why it doesn't automatically install everything
+  from pipfile.lock? Should do sync --dev before running the command. Maybe the default operation
+  (whether to install the deps, and which?)could be in the Pipfile? Or we could run without
+  installing the deps by an explicit option?
+  Maybe doing pipenv sync --dev and then pipenv run in a makefile isn't that horrible?
+- install pytest-docker-compose from my Github URL
+- write a blogpost - how I replaced my workflow with virtualenvwrapper (for prototyping)
+  and tox (for "serious" project testing and development)
+- check (on vagrant or lxd) if it stores the virtualenvs in ~/.virtualenvs if virtualenvwrapper
+  isn't installed before installing pipenv
+- removing virtualenv with a pipenv command?
+
+Done:
+=====
+- setting up a project -> just pipenv install, or pipenv install with the first dependency
+    This replaces virtualenvwrapper. The one added thing, though it's not big, is creating a
+    directory for the project, which I didn't need to do with virtualenvwrapper. Then again,
+    I only used virtualenvwrapper for experimenting, and I always needed to do the (not as effortless
+    as I'd want) transition to tox when I was making the project "official". Now it's a smooth
+    transition. AWESOME! So goddamn nice and simple!
+
+Notes
+=====
+- the command line arguments are a bit confusing. The stuff being -- arguments seem
+like commands themselves, a bit. Or am I overreacting?
+
+- show my old work flows, contrast that with the new ones, highlight the tedious/problematic stuff
+  in the old ones
+
+- I'm not gonna reiterate anything that's in the original docs - read them
+  (well, the first page, should be enough). I'm not gonna tell you how to install this (it's easy
+  and it's explained there)
