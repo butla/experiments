@@ -1,0 +1,14 @@
+---
+version: '2'
+services:
+  api:
+    image: python:3.6-alpine
+    environment:
+      - >
+        sraka={
+          "asdf": 123,
+          "bcad": "qwe"
+        }
+      - ble=kaczka
+    command: >
+      python3 -c "import os, json, pprint; pprint.pprint(json.loads(os.environ['sraka']));"
