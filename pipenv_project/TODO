@@ -11,6 +11,7 @@ TODO:
 - check (on vagrant or lxd) if it stores the virtualenvs in ~/.virtualenvs if virtualenvwrapper
   isn't installed before installing pipenv
 - removing virtualenv with a pipenv command?
+- building a docker image with Pipfile instead of requirements?
 
 Done:
 =====
@@ -25,6 +26,7 @@ Notes
 =====
 - the command line arguments are a bit confusing. The stuff being -- arguments seem
 like commands themselves, a bit. Or am I overreacting?
+Shell Completion - pipenv --completion is an example of that
 
 - show my old work flows, contrast that with the new ones, highlight the tedious/problematic stuff
   in the old ones
