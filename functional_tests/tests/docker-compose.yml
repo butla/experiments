@@ -1,0 +1,27 @@
+---
+version: '2'
+services:
+  api:
+    build: ..
+    image: awesome_server
+    ports:
+      - "8080"
+    links:
+      - database
+    environment:
+      - REDIS_PORT=6379
+      - REDIS_HOST=database
+  database:
+    image: redis:5.0-alpine
+    ports:
+      - "6379"
+  waiter:
+    image: butla/contaiwaiter
+    ports:
+      - "8080"
+    links:
+      - api
+      - database
+    environment:
+      - URLS=http://api:8080
+      - REDIS_HOSTNAMES=database

@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+aiohttp = "*"
+env-var-config = "*"
+aredis = "*"
+
+[dev-packages]
+pytest-docker = {editable = true, ref = "b2cacbc", git = "https://github.com/butla/pytest-docker"}
+pytest = "*"
+requests = "*"
+"flake8" = "*"
+tenacity = "*"
+pytest-aiohttp = "*"
+redis = "*"
+
+[requires]
+python_version = "3.6"
