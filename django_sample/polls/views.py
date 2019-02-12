@@ -1,7 +1,8 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 
-from .models import Question
+from .models import Choice, Question
 
 
 def index(request):
@@ -17,8 +18,22 @@ def detail(request, question_id):
 
 
 def results(request, question_id):
-    return HttpResponse(f"You're looking at the results of question {question_id}.")
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, 'polls/results.html', {'question': question})
 
 
 def vote(request, question_id):
-    return HttpResponse(f"You're voting on question {question_id}.")
+    question = get_object_or_404(Question, pk=question_id)
+    try:
+        chosen_answer_id = request.POST['choice']
+        selected_choice = question.choice_set.get(pk=chosen_answer_id)
+    except (KeyError, Choice.DoesNotExist):
+        return render(request, 'polls/detail.html', {
+            'question': question,
+            'error_message': "You didn't select a choice."
+        })
+    else:
+        selected_choice.votes += 1
+        selected_choice.save()
+        redirect_url = reverse('polls:results', args=(question.id,))
+        return HttpResponseRedirect(redirect_url)
