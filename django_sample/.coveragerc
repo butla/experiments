@@ -1,0 +1,19 @@
+[run]
+branch = true
+# TODO enable parallel coverage when Docker is added
+# parallel = true
+
+# TODO enable when Docker is added.
+# [paths]
+# source =
+#     /PATH_LOCALLY
+#     # This is the path the code will be under in the container,
+#     # which is exercised during the functional tests.
+#     /PATH_ON_DOCKER
+
+[report]
+exclude_lines =
+    def __repr__
+    pragma: no cover
+# TODO this needs to be enabled and kept that way
+#fail_under = 100

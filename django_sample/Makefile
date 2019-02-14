@@ -6,7 +6,8 @@ run: migrate
 
 test:
 	# TODO add pylint
-	pytest
+	coverage run --source=django_sample/,polls/ -m pytest 
+	coverage report -m
 
 migrate:
 	python manage.py migrate
