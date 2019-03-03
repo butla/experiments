@@ -1,16 +1,7 @@
-import datetime
-
 from django.urls import reverse
-from django.utils import timezone
 import pytest
 
-from polls.models import Question
-
-
-def create_question(text: str, days_old: int = 0):
-    creation_date = timezone.now() - datetime.timedelta(days=days_old)
-    print(creation_date)
-    return Question.objects.create(text=text, pub_date=creation_date)
+from .utils import create_question
 
 
 @pytest.mark.django_db
