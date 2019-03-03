@@ -6,8 +6,6 @@ import pytest
 
 from polls.models import Question
 
-# TODO rename file to questions index test
-
 
 def create_question(text: str, days_old: int = 0):
     creation_date = timezone.now() - datetime.timedelta(days=days_old)
