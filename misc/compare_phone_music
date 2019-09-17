@@ -1,0 +1,10 @@
+#!/bin/bash
+if [ -z $1 ]; then
+    echo "Specify last part of the phone's IP address!"
+    exit
+fi
+
+PHONE_MUSIC="$(ssh -p 2222 192.168.0.$1 'ls /storage/9C33-6BBD/muzyka')"
+SORTED_PHONE_MUSIC=$(sort <(echo "$PHONE_MUSIC"))
+
+diff <(ls /media/butla/Dane/Muzyka) <(echo "$SORTED_PHONE_MUSIC")

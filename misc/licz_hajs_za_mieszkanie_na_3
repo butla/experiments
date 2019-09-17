@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+import sys
+
+INTERNET_COST = 67
+
+cost_str = sys.argv[1]
+cost_str_intl = cost_str.replace(',', '.')
+
+cost = float(cost_str_intl) + INTERNET_COST
+
+per_person = cost / 3
+
+print('Za neta', INTERNET_COST, 'zł, łącznie', cost, 'zł')
+print('Do zapłaty:', round(per_person, 2), 'zł')

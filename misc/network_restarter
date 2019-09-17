@@ -1,0 +1,25 @@
+#!/bin/bash
+# TODO chart immediately in Python / Bokeh in the browser in the background?
+if [ $(id -u) != 0 ]; then
+    echo Error! Need to run that with sudo!
+    exit 1
+fi
+
+echo Running...
+tmux -S /tmp/tmux-$SUDO_UID/default split-window -h "ping 208.67.222.222" # ping OpenDNS
+
+while true; do
+    sleep 1
+    if ! ping -c 1 8.8.8.8 2>&1 1>/dev/null; then
+        sleep 2
+        if ! ping -c 1 8.8.8.8 2>&1 1>/dev/null; then
+            echo $(date -Iseconds): current Wi-Fi networks
+            nmcli dev wifi
+            echo $(date -Iseconds): current Wi-Fi networks after rescan
+            nmcli dev wifi rescan
+            echo $(date -Iseconds): restarting network
+            nmcli networking off && nmcli networking on
+            sleep 5
+        fi
+    fi
+done
