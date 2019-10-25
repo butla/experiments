@@ -1,4 +1,3 @@
-// TODO this is also breaking. Why is lodash not minified in?
 import _ from 'lodash';
 
 function component() {
