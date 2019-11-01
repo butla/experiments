@@ -71,3 +71,6 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# JS stuff
+*node_modules
