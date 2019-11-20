@@ -4,8 +4,8 @@ source =
     polls/
 
 branch = true
-# TODO enable parallel coverage when Docker is added
-# parallel = true
+
+parallel = true
 
 # TODO enable when Docker is added.
 # [paths]

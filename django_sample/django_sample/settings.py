@@ -10,7 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
+import coverage
 import os
+
+
+# This will only do something when COVERAGE_PROCESS_START environment variable is set.
+# It's before all function declarations so that they are indexed properly.
+if coverage.process_startup(): # pragma: no cover
+    print('---This application run will be measuring test coverage---', flush=True)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
