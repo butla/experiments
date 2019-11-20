@@ -1,4 +1,8 @@
 [run]
+source =
+    django_sample/
+    polls/
+
 branch = true
 # TODO enable parallel coverage when Docker is added
 # parallel = true

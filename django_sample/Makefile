@@ -7,7 +7,7 @@ run: migrate
 test:
 	# TODO add pylint
 	# TODO add YAPF?
-	coverage run --source=django_sample/,polls/ -m pytest 
+	coverage run -m pytest
 	coverage report -m
 
 migrate:
