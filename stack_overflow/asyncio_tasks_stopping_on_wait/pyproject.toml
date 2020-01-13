@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "asyncio_tasks_stopping_on_wait"
+version = "0.1.0"
+description = ""
+authors = ["Michal Bultrowicz <michal.bultrowicz@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+aiohttp = "^3.6.2"
+
+[tool.poetry.dev-dependencies]
+ptpython = "^2.0.6"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
