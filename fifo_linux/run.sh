@@ -1,5 +1,5 @@
 #!/bin/bash
-python receiver.py &
-python writer.py XXXXXXXXXXXXXXXXXXXXXXXXXXXXX &
-python writer.py ----------------------------- &
-python writer.py ///////////////////////////// &
+python3 receiver.py &
+python3 writer.py XXXXXXXXXXXXXXXXXXXXXXXXXXXXX &
+python3 writer.py ----------------------------- &
+python3 writer.py ///////////////////////////// &
