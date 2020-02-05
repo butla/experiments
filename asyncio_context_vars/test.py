@@ -1,6 +1,7 @@
-# TODO make coroutine call and a task and check if they inherit the vars
+# ran with python 3.8.1
 import asyncio
 import contextvars
+import time
 
 DEFAULT = 'default'
 CHANGED = 'changed'
@@ -18,6 +19,9 @@ async def task1():
     test_var.set(CHANGED)
     asyncio.create_task(task1_child())
 
+    loop = asyncio.get_event_loop()
+    loop.run_in_executor(None, synchronous_task)
+
 
 async def task1_child():
     assert test_var.get() == CHANGED
@@ -30,6 +34,11 @@ async def task2():
     assert test_var.get() == DEFAULT
     print('task 2 success')
 
+
+def synchronous_task():
+    # sad that the context vars don't get propagated when doing run_in_executor
+    assert test_var.get() == DEFAULT
+    print("synchronous task success")
 
 
 if __name__ == '__main__':
