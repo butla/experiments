@@ -74,3 +74,8 @@ target/
 
 # JS stuff
 *node_modules
+
+# mypy caches
+*.mypy_cache
+
+
