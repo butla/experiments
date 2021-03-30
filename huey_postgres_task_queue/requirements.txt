@@ -6,6 +6,6 @@ peewee==3.13.1
 prompt-toolkit==2.0.10
 psycopg2==2.8.4
 ptpython==2.0.6
-Pygments==2.5.2
+Pygments==2.7.4
 six==1.13.0
 wcwidth==0.1.7
