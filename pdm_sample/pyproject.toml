@@ -1,0 +1,24 @@
+[project]
+name = ""
+version = ""
+description = ""
+authors = [
+    {name = "Michal Bultrowicz", email = "michal.bultrowicz@gmail.com"},
+]
+dependencies = [
+    "fastapi~=0.65",
+    "uvicorn~=0.13",
+]
+requires-python = ">=3.8"
+dynamic = ["classifiers"]
+license = {text = "MIT"}
+
+[project.urls]
+homepage = ""
+
+[build-system]
+requires = ["pdm-pep517"]
+build-backend = "pdm.pep517.api"
+
+[tool]
+[tool.pdm]
