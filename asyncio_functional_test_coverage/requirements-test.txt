@@ -2,7 +2,7 @@ coverage-pth==0.0.1
 coverage==4.3.4
 pytest-asyncio==0.5.0
 pytest==3.0.7
-py==1.4.33
+py==1.10.0
 setuptools==35.0.2
 appdirs==1.4.3
 packaging==16.8
