@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "dear_py_gui"
+version = "0.1.0"
+description = "DearPyGui testing app"
+authors = ["Michal Bultrowicz <michal.bultrowicz@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+dearpygui = "^0.8.14"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

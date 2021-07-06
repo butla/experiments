@@ -1,0 +1,136 @@
+[[package]]
+name = "appdirs"
+version = "1.4.4"
+description = "A small Python module for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "jedi"
+version = "0.18.0"
+description = "An autocompletion tool for Python that can be used for text editors."
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+parso = ">=0.8.0,<0.9.0"
+
+[package.extras]
+qa = ["flake8 (==3.8.3)", "mypy (==0.782)"]
+testing = ["Django (<3.1)", "colorama", "docopt", "pytest (<6.0.0)"]
+
+[[package]]
+name = "nanogui"
+version = "0.1.2"
+description = "A minimalistic GUI library for OpenGL, GLES 2, and Metal"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "parso"
+version = "0.8.2"
+description = "A Python Parser"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.extras]
+qa = ["flake8 (==3.8.3)", "mypy (==0.782)"]
+testing = ["docopt", "pytest (<6.0.0)"]
+
+[[package]]
+name = "prompt-toolkit"
+version = "3.0.19"
+description = "Library for building powerful interactive command lines in Python"
+category = "dev"
+optional = false
+python-versions = ">=3.6.1"
+
+[package.dependencies]
+wcwidth = "*"
+
+[[package]]
+name = "ptpython"
+version = "3.0.18"
+description = "Python REPL build on top of prompt_toolkit"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+appdirs = "*"
+jedi = ">=0.16.0"
+prompt-toolkit = ">=3.0.18,<3.1.0"
+pygments = "*"
+
+[package.extras]
+all = ["black"]
+ptipython = ["ipython"]
+
+[[package]]
+name = "pygments"
+version = "2.9.0"
+description = "Pygments is a syntax highlighting package written in Python."
+category = "dev"
+optional = false
+python-versions = ">=3.5"
+
+[[package]]
+name = "wcwidth"
+version = "0.2.5"
+description = "Measures the displayed width of unicode strings in a terminal"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[metadata]
+lock-version = "1.1"
+python-versions = "^3.8"
+content-hash = "a02a869e488fba824b90f0858f4ba2ee311c7b2e1977f086ef1f0fe4c5bd954d"
+
+[metadata.files]
+appdirs = [
+    {file = "appdirs-1.4.4-py2.py3-none-any.whl", hash = "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"},
+    {file = "appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"},
+]
+jedi = [
+    {file = "jedi-0.18.0-py2.py3-none-any.whl", hash = "sha256:18456d83f65f400ab0c2d3319e48520420ef43b23a086fdc05dff34132f0fb93"},
+    {file = "jedi-0.18.0.tar.gz", hash = "sha256:92550a404bad8afed881a137ec9a461fed49eca661414be45059329614ed0707"},
+]
+nanogui = [
+    {file = "nanogui-0.1.2-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:0e9ab947ceb70b984dfd3eb011a998d8528b38605816254a71368dad8053ad6a"},
+    {file = "nanogui-0.1.2-cp36-cp36m-manylinux2014_x86_64.whl", hash = "sha256:249dbea6f7380a031ae71fbdf4306fd672f74e45504a3950dcd22ecdacbc6030"},
+    {file = "nanogui-0.1.2-cp36-cp36m-win_amd64.whl", hash = "sha256:b94e2d6e2178a71c295f5db67d8cf1275b4c445db708ec39c350a135118a33b5"},
+    {file = "nanogui-0.1.2-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:bd95132bba059e1c3b104ef8c101e4e20dd836e4b62325f9923a2a520b958ad3"},
+    {file = "nanogui-0.1.2-cp37-cp37m-manylinux2014_x86_64.whl", hash = "sha256:170bb214e2e21bd485b0a41868d1926872a1e8b725f08bc9a8124fefaeea8be2"},
+    {file = "nanogui-0.1.2-cp37-cp37m-win_amd64.whl", hash = "sha256:e422229d6120a91f65bac56674f873e7dc37881bd8733fdc5f31b7e8101f7523"},
+    {file = "nanogui-0.1.2-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:c407be6debe792a1916b0a871590ba9e67d2ca3c6a91b4d91b4401bb57fe390f"},
+    {file = "nanogui-0.1.2-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:23a219ce00ebe14103bc7578d17f4af1a9e40db9501def872f0d06c9192aac94"},
+    {file = "nanogui-0.1.2-cp38-cp38-win_amd64.whl", hash = "sha256:7c927c631784ecb0a77bd6a4d585231f52c7ef206726372b20a448250c1d1486"},
+    {file = "nanogui-0.1.2-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:f12f0a64e45837043d533926cb359ac0ea4bbec5aa3069d479775e62ce5223d6"},
+    {file = "nanogui-0.1.2-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:47a3aaaf3cb1ab5f56382f6b3b2a5704820a5a2643b672ab2e52980bfdf7f7a0"},
+    {file = "nanogui-0.1.2-cp39-cp39-win_amd64.whl", hash = "sha256:16f82e983c2b32fa9478f12f9a0dba66ed9c6fdcf2dce12f8d63ec1747987466"},
+]
+parso = [
+    {file = "parso-0.8.2-py2.py3-none-any.whl", hash = "sha256:a8c4922db71e4fdb90e0d0bc6e50f9b273d3397925e5e60a717e719201778d22"},
+    {file = "parso-0.8.2.tar.gz", hash = "sha256:12b83492c6239ce32ff5eed6d3639d6a536170723c6f3f1506869f1ace413398"},
+]
+prompt-toolkit = [
+    {file = "prompt_toolkit-3.0.19-py3-none-any.whl", hash = "sha256:7089d8d2938043508aa9420ec18ce0922885304cddae87fb96eebca942299f88"},
+    {file = "prompt_toolkit-3.0.19.tar.gz", hash = "sha256:08360ee3a3148bdb5163621709ee322ec34fc4375099afa4bbf751e9b7b7fa4f"},
+]
+ptpython = [
+    {file = "ptpython-3.0.18-py2.py3-none-any.whl", hash = "sha256:0e156603adfab0436aedd3e149cd7af04edbf4deb7fd67eea06f21760700f3ae"},
+    {file = "ptpython-3.0.18.tar.gz", hash = "sha256:1a641021f550d03580576ddf49eb15a94693b39de9a8334786d85e180834da9d"},
+]
+pygments = [
+    {file = "Pygments-2.9.0-py3-none-any.whl", hash = "sha256:d66e804411278594d764fc69ec36ec13d9ae9147193a1740cd34d272ca383b8e"},
+    {file = "Pygments-2.9.0.tar.gz", hash = "sha256:a18f47b506a429f6f4b9df81bb02beab9ca21d0a5fee38ed15aef65f0545519f"},
+]
+wcwidth = [
+    {file = "wcwidth-0.2.5-py2.py3-none-any.whl", hash = "sha256:beb4802a9cebb9144e99086eff703a642a13d6a0052920003a230f3294bbe784"},
+    {file = "wcwidth-0.2.5.tar.gz", hash = "sha256:c4d647b99872929fdb7bdcaa4fbe7f01413ed3d98077df798530e5b04f116c83"},
+]

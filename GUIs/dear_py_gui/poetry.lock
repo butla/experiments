@@ -1,0 +1,28 @@
+[[package]]
+name = "dearpygui"
+version = "0.8.14"
+description = "DearPyGui: A simple Python GUI Toolkit"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[metadata]
+lock-version = "1.1"
+python-versions = "^3.8"
+content-hash = "1bc89233b0a4418ee01bcd205ac53f3d5a5f02b1d676cc2f3eedbbe04e1c3649"
+
+[metadata.files]
+dearpygui = [
+    {file = "dearpygui-0.8.14-cp36-cp36m-macosx_10_6_x86_64.whl", hash = "sha256:2dd6a28380761ad58c0d5bf79d07866536f8f3b7b8e936db82948033d07982b9"},
+    {file = "dearpygui-0.8.14-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:60161b4ebe7e68d9638fe5bc779cd3f2d71a97d86e4079ce2abdf6ae8020f255"},
+    {file = "dearpygui-0.8.14-cp36-cp36m-win_amd64.whl", hash = "sha256:d59398f7cbade9098590c98da8576e014d0ff0f087e7f44f216b0598dd2296e0"},
+    {file = "dearpygui-0.8.14-cp37-cp37m-macosx_10_6_x86_64.whl", hash = "sha256:221827f9d3b9c5ee6ae464cce4bfa57232752eca9b21e225fbc3996697ca09c1"},
+    {file = "dearpygui-0.8.14-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:1152532fa81507438a235c77c6e5e16cf89df8a0bc1462cd560e32eab339b948"},
+    {file = "dearpygui-0.8.14-cp37-cp37m-win_amd64.whl", hash = "sha256:01ffda28192256f01cf1910bcdf1b7b5c4738ff0e3f52bacdd03a0506e9c24bd"},
+    {file = "dearpygui-0.8.14-cp38-cp38-macosx_10_6_x86_64.whl", hash = "sha256:66dc2bac91916677dec3cf8bb5e072681e823b3b73ff1e902fec7a77ed3f94ba"},
+    {file = "dearpygui-0.8.14-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:7531370e7c5e37a08fe51ac9e8f687ba7b11a6c91c73baff7c1ee012c39446a5"},
+    {file = "dearpygui-0.8.14-cp38-cp38-win_amd64.whl", hash = "sha256:daeef1e8d28dc57c656fd25841c042a82ba79ec0a9077937bf27b1771afd27c8"},
+    {file = "dearpygui-0.8.14-cp39-cp39-macosx_10_6_x86_64.whl", hash = "sha256:3f9c76230d76dd2b5d931116a8789aadba7c58282a22ab6b041d11a5cf82a711"},
+    {file = "dearpygui-0.8.14-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:199b720b9268dbe115123229b1b3c22baceb63b36fdd2df24c038e505083fb25"},
+    {file = "dearpygui-0.8.14-cp39-cp39-win_amd64.whl", hash = "sha256:222851ac2658c734f6114b3347a41508ce944af68c53bec6b611c1eab721bd64"},
+]
