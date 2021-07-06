@@ -2,7 +2,7 @@ docker-py==1.10.6
 docker-pycreds==0.2.1
 mountepy==0.4.0
 port-for==0.3.1
-py==1.4.31
+py==1.10.0
 pytest==3.0.5
 python-dateutil==2.6.0
 websocket-client==0.40.0
