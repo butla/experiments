@@ -1,0 +1,10 @@
+Metadata-Version: 2.1
+Briefcase-Version: 0.3.5
+Name: beeware_toga_test_app
+Formal-Name: Beeware Toga Test App
+App-ID: com.example.beeware_toga_test_app
+Version: 0.0.1
+Home-page: https://example.com/beeware_toga_test_app
+Author: Michał Bultrowicz
+Author-email: michał@example.com
+Summary: My first application
