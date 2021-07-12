@@ -12,8 +12,13 @@ formal_name = "Beeware Toga Test App"
 description = "My first application"
 icon = "src/beeware_toga_test_app/resources/beeware_toga_test_app"
 sources = ['src/beeware_toga_test_app']
-requires = []
 
+# Dunno if that works as expected
+# support_package = 'https://briefcase-support.org/python?platform=linux&version=3.8&arch=x86_64'
+
+requires = [
+    'ptpython',
+]
 
 [tool.briefcase.app.beeware_toga_test_app.macOS]
 requires = [

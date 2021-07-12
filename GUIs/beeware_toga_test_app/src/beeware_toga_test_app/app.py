@@ -1,6 +1,7 @@
 """
 My first application
 """
+import sys
 import toga
 from toga.style import Pack
 from toga.style.pack import COLUMN, ROW
@@ -39,6 +40,8 @@ class BeewareTogaTestApp(toga.App):
         self.main_window = toga.MainWindow(title=self.formal_name)
         self.main_window.content = main_box
         self.main_window.show()
+        import ptpython
+        print(ptpython.__file__)
 
     def say_hello(self, widget):
         self.main_window.info_dialog(
