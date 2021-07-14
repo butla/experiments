@@ -17,7 +17,7 @@ sources = ['src/beeware_toga_test_app']
 # support_package = 'https://briefcase-support.org/python?platform=linux&version=3.8&arch=x86_64'
 
 requires = [
-    'ptpython',
+    'Pillow',
 ]
 
 [tool.briefcase.app.beeware_toga_test_app.macOS]

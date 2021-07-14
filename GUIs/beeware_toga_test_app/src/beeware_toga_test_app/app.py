@@ -3,6 +3,7 @@ My first application
 """
 import sys
 import toga
+
 from toga.style import Pack
 from toga.style.pack import COLUMN, ROW
 from toga.images import Image
@@ -53,9 +54,14 @@ class BeewareTogaTestApp(toga.App):
             on_press=self._open_image,
             style=Pack(padding=5)
         )
+        modify_image_button = toga.Button(
+            'Modify Image',
+            on_press=self._modify_image,
+            style=Pack(padding=5)
+        )
         self.image_view = toga.ImageView(style=Pack(flex=1))
         image_view_box = toga.Box(
-            children=[open_image_button, self.image_view],
+            children=[open_image_button, modify_image_button, self.image_view],
             style=Pack(direction=COLUMN),
         )
 
@@ -71,12 +77,32 @@ class BeewareTogaTestApp(toga.App):
         # TODO no idea how to draw on an image...
         # free-form GUI object placement would help, or Canvas with a background
         try:
-            selected_file = self.main_window.open_file_dialog('Open image file')
+            self.selected_file = self.main_window.open_file_dialog('Open image file')
         except ValueError:
             print('no image chosen')
             return
-        self.image_view.image = Image(selected_file)
+        self.image_view.image = Image(self.selected_file)
+
+
+    def _modify_image(self, source_button):
+        from PIL import Image as PilImage
+        old_image = PilImage.open(self.selected_file)
+        new_image = old_image.transpose(PilImage.ROTATE_90)
+        import io
+        image_stream = io.BytesIO()
+        new_image.save(image_stream, format='jpeg')
+        # rewind the seek position, so the stream can be read
+        image_stream.seek(0)
+        # TODO this isn't working
+        self.image_view.image = Image(image_stream)
+        # alternative method
+        # self.image_view.image = Image(new_image.tobytes())
 
 
 def main():
-    return BeewareTogaTestApp()
+    # formal name and app_id aren't set automagically when running from a virtualenv
+    return BeewareTogaTestApp(formal_name='Test App', app_id='com.example.dupa')
+
+
+if __name__ == '__main__':
+    main().main_loop()
