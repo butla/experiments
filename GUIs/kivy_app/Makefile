@@ -1,0 +1,2 @@
+run:
+	python gui.py
