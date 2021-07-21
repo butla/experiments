@@ -40,95 +40,60 @@ KV = '''
             orientation: 'vertical'
             id: table_box
 
-            BoxLayout:
-                orientation: 'horizontal'
+            PersonRow:
+                last_name: 'Mejer'
+                first_name: 'Zdzichu'
+                height_: 173
 
-                Label:
-                    size_hint: 0.25, None
-                    text: 'Mejer'
+            PersonRow:
+                last_name: 'Ptok'
+                first_name: 'Kacper'
+                height_: 180
 
-                Label:
-                    size_hint: 0.25, None
-                    text: 'Zdzichu'
+            PersonRow:
+                last_name: 'Ufnal'
+                first_name: 'Melania'
+                height_: 169
 
-                Label:
-                    size_hint: 0.25, None
-                    text: '173'
-
-                Button:
-                    size_hint: 0.25, None
-                    text: 'otwórz'
-                    on_press: app.open_image()
-
-            BoxLayout:
-                orientation: 'horizontal'
-
-                Label:
-                    size_hint: 0.25, None
-                    text: 'Ptok'
-
-                Label:
-                    size_hint: 0.25, None
-                    text: 'Kacper'
-
-                Label:
-                    size_hint: 0.25, None
-                    text: '180'
-
-                Button:
-                    size_hint: 0.25, None
-                    text: 'otwórz'
-                    on_press: app.open_image()
-
-            BoxLayout:
-                orientation: 'horizontal'
-
-                Label:
-                    size_hint: 0.25, None
-                    text: 'Ufnal'
-
-                Label:
-                    size_hint: 0.25, None
-                    text: 'Melania'
-
-                Label:
-                    size_hint: 0.25, None
-                    text: '169'
-
-                Button:
-                    size_hint: 0.25, None
-                    text: 'otwórz'
-                    on_press: app.open_image()
-
-            BoxLayout:
-                orientation: 'horizontal'
-
-                Label:
-                    size_hint: 0.25, None
-                    text: 'Cyroń'
-
-                Label:
-                    size_hint: 0.25, None
-                    text: 'Marcin'
-
-                Label:
-                    size_hint: 0.25, None
-                    text: '183'
-
-                Button:
-                    size_hint: 0.25, None
-                    text: 'otwórz'
-                    on_press: app.open_image()
+            PersonRow:
+                last_name: 'Cyroń'
+                first_name: 'Marcin'
+                height_: 183
 
 <ImageViewScreen>:
     BoxLayout:
         orientation: 'vertical'
+
         Button:
             text: 'Go back'
+            size_hint: 1, 0.15
             on_press: root.manager.current = 'clients'
 
         ImageCanvas:
             source: 'hippo.jpg'
+
+<PersonRow>:
+    id: person
+
+    BoxLayout:
+        orientation: 'horizontal'
+
+        Label:
+            size_hint: 0.25, None
+            text: person.last_name
+
+        Label:
+            size_hint: 0.25, None
+            text: person.first_name
+
+        Label:
+            size_hint: 0.25, None
+            text: str(person.height_)
+
+        Button:
+            size_hint: 0.25, None
+            text: 'otwórz'
+            on_press: app.open_image()
 '''
 
 
@@ -144,14 +109,20 @@ class ImageViewScreen(Screen):
 
     # an example of how to use file chooser is in Kivy repo: kivy/examples/RST_Editor/main.py
 
+class PersonRow(BoxLayout):
+    last_name = StringProperty()
+    first_name = StringProperty()
+    height_ = NumericProperty()
+
 class ImageCanvas(Image):
     def on_touch_down(self, touch):
+        # TODO limit the processing to touches on the image
         with self.canvas:
             kivy.graphics.Color(0, 0.7, 0)
             dot_size = 20
             dot_position = (touch.pos[0] - dot_size//2, touch.pos[1] - dot_size//2)
             kivy.graphics.Ellipse(pos=dot_position, size=(dot_size, dot_size))
-        print('dupa', touch)
+        print(touch, touch.button, 'mouse button')
 
 
 # TODO make the app async
