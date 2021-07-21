@@ -70,7 +70,7 @@ KV = '''
             on_press: root.manager.current = 'clients'
 
         ImageCanvas:
-            source: 'hippo.jpg'
+            source: '../hippo.jpg'
 
 <PersonRow>:
     id: person
