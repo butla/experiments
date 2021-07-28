@@ -10,6 +10,7 @@ python = "^3.8"
 Kivy = {extras = ["base"], version = "^2.0.0"}
 
 [tool.poetry.dev-dependencies]
+pyinstaller = "4.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -70,7 +70,7 @@ KV = '''
             on_press: root.manager.current = 'clients'
 
         ImageCanvas:
-            source: '../hippo.jpg'
+            source: 'hippo.jpg'
 
 <PersonRow>:
     id: person
@@ -104,16 +104,19 @@ class ClientListScreen(Screen):
 
 
 class ImageViewScreen(Screen):
-    # TODO fill that table_box from sqlite. Might have to be made into a recycle view
-    table_box = ObjectProperty()
-
     # an example of how to use file chooser is in Kivy repo: kivy/examples/RST_Editor/main.py
+    pass
+
 
 class PersonRow(BoxLayout):
     last_name = StringProperty()
     first_name = StringProperty()
     height_ = NumericProperty()
 
+
+# TODO should be using https://docs.python.org/3.7/library/importlib.html#module-importlib.resources
+# to load the image... well no, actually I'll be loading it from somewhere else. But some other images should be
+# loaded like that.
 class ImageCanvas(Image):
     def on_touch_down(self, touch):
         # TODO limit the processing to touches on the image
