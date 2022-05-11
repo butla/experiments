@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "pandas_seaborn"
+version = "0.1.0"
+description = "Visualising data with Pandas and Seaborn"
+authors = ["Michal Bultrowicz <michal.bultrowicz@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+# ~ instead of ^ is important here, so we reject 4.0, which scipy rejects
+python = "~3.10"
+pandas = "^1.4.2"
+scipy = "^1.8.0"
+seaborn = "^0.11.2"
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.13.8"
+ptpython = "^3.0.20"
+yapf = "^0.32.0"
+pdbpp = "^0.10.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
