@@ -1,0 +1,8 @@
+[package]
+name = "rust"
+version = "0.1.0"
+authors = ["Michal Bultrowicz <michal.bultrowicz@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+warp = "^0.1.16"

@@ -1,0 +1,10 @@
+---
+applications:
+- name: falcon-test
+  command: gunicorn falcon_app.app:app --bind :$VCAP_APP_PORT --enable-stdio-inheritance 
+  memory: 128M
+  buildpack: python_buildpack 
+  env:
+    # LOG_LEVEL isn't used yet
+    LOG_LEVEL: "INFO"
+    VERSION: "0.0.1"

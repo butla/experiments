@@ -1,0 +1,8 @@
+falcon==0.3.0
+greenlet==0.4.9
+gunicorn==19.3.0
+meinheld==0.5.8
+python-mimeparse==0.1.4
+requests==2.7.0
+six==1.9.0
+uWSGI==2.0.12

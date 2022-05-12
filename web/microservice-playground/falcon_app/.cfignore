@@ -1,0 +1,13 @@
+*.py[cod]
+
+tests/
+
+.tox/
+.coverage
+coverage.xml
+
+.idea/
+.vagrant/
+
+*.sh
+*.iml
