@@ -3,16 +3,26 @@ import psycopg2
 from . import config
 
 SQL = """
-CREATE TABLE IF NOT EXISTS groups(
-    id SERIAL PRIMARY KEY,
-    item_label_counts JSONB
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE IF NOT EXISTS bags(
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    item_kind_counts JSONB
 );
 
+-- create type if it doesn't exist
+DO $$ BEGIN
+    IF to_regtype('item_kind') IS NULL THEN
+        CREATE TYPE item_kind AS ENUM ('round', 'square', 'squiggly', 'other');
+    ELSE
+        raise notice 'item_kind type already exists, so not creating...';
+    END IF;
+END $$;
+
 CREATE TABLE IF NOT EXISTS items(
-    id SERIAL PRIMARY KEY,
-    label TEXT,
-    group_id INTEGER,
-    FOREIGN KEY (group_id) REFERENCES groups
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    kind item_kind,
+    group_id integer REFERENCES bags (id)
 );
 """
 
@@ -29,6 +39,7 @@ def main():
 
     cursor = connection.cursor()
     cursor.execute(SQL)
+    # TODO get the stdout from the command
     print('Schema created.')
 
 

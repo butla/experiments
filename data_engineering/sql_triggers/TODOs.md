@@ -1,0 +1,1 @@
+- use SQL ORM core / pypika to define the schema
