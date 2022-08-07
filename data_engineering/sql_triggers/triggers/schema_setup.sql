@@ -1,8 +1,3 @@
-import psycopg2
-
-from . import config
-
-SQL = """
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS bags(
@@ -24,24 +19,4 @@ CREATE TABLE IF NOT EXISTS items(
     kind item_kind,
     group_id integer REFERENCES bags (id)
 );
-"""
 
-
-def main():
-    connection = psycopg2.connect(
-        host=config.DB_HOST,
-        port=config.DB_PORT,
-        dbname=config.DB_NAME,
-        user=config.DB_USER,
-        password=config.DB_PASS,
-    )
-    connection.autocommit = True
-
-    cursor = connection.cursor()
-    cursor.execute(SQL)
-    # TODO get the stdout from the command
-    print('Schema created.')
-
-
-if __name__ == '__main__':
-    main()
