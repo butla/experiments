@@ -3,16 +3,12 @@
 # MAIN commands
 # =========================
 
-run:
-	docker-compose up -d
+run: _run migrate
 
-migrate:
-	poetry run python -m triggers.schema_setup
+check: test static_checks
 
 db_enter:
 	PGPASSWORD=secret pgcli -h localhost -d postgres -p 5432 -U postgres
-
-check: test static_checks
 
 # SECONDARY commands
 # =========================
@@ -22,3 +18,9 @@ test:
 
 static_checks:
 	poetry run pylint triggers
+
+migrate:
+	poetry run python -m triggers.schema_setup
+
+_run:
+	docker-compose up -d

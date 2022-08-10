@@ -1,1 +1,2 @@
 - use SQL ORM core / pypika to define the schema
+- have a Python trigger

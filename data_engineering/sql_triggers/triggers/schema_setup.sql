@@ -20,3 +20,4 @@ CREATE TABLE IF NOT EXISTS items(
     group_id integer REFERENCES bags (id)
 );
 
+-- TODO use transition tables for AFTER STATEMENT trigger
