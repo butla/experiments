@@ -6,6 +6,7 @@ from . import config
 
 
 def main():
+    # TODO retry
     connection = psycopg2.connect(
         host=config.DB_HOST,
         port=config.DB_PORT,
