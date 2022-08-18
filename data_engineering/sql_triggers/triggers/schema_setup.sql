@@ -20,50 +20,52 @@ CREATE TABLE IF NOT EXISTS items(
     bag_id uuid REFERENCES bags (id)
 );
 
-CREATE OR REPLACE FUNCTION bag_items_count() RETURNS TRIGGER AS $$
-    BEGIN
-        /* IF (TG_OP = 'DELETE') THEN */
-        /*     INSERT INTO emp_audit */
-        /*         SELECT 'D', now(), user, o.* FROM old_table o; */
-       -- Source of the trick https://stackoverflow.com/a/34680345/2252728
-       -- TODO SELECT X INTO
-       select json_object_agg(kind_counts.kind, kind_counts.item_count) into item_changes
-       from (
-        select kind, count(*) as item_count
-        from items
-        where group_id = 'e9a3f436-b03f-4ced-9e4a-1b0590c6c08b'
-        group by kind
-       ) as kind_counts;
+/* CREATE OR REPLACE FUNCTION bag_items_count() RETURNS TRIGGER AS $$ */
+/*     BEGIN */
+/*         /1* IF (TG_OP = 'DELETE') THEN *1/ */
+/*         /1*     INSERT INTO emp_audit *1/ */
+/*         /1*         SELECT 'D', now(), user, o.* FROM old_table o; *1/ */
+/*        -- Source of the trick https://stackoverflow.com/a/34680345/2252728 */
 
-       -- version with more intermittent vars
-       select kind, count(*) as item_count into kind_counts_rows
-       from items
-       where group_id = 'e9a3f436-b03f-4ced-9e4a-1b0590c6c08b'
-       group by kind;
+/*        -- TODO handle inserts into multiple bags */
+/*        -- TODO SELECT X INTO */
+/*        SELECT json_object_agg(kind_counts.kind, kind_counts.count_of_kind) INTO STRICT item_changes */
+/*        FROM ( */
+/*         SELECT kind, count(*) AS count_of_kind */
+/*         FROM items */
+/*         WHERE group_id = 'e9a3f436-b03f-4ced-9e4a-1b0590c6c08b' */
+/*         GROUP BY kind */
+/*        ) AS kind_counts; */
 
-       select jsonb_object_agg(kind, item_count) into kind_counts_json
-       from kind_counts_rows;
+/*        -- version with more intermittent vars */
+/*        select kind, count(*) as item_count into kind_counts_rows */
+/*        from items */
+/*        where group_id = 'e9a3f436-b03f-4ced-9e4a-1b0590c6c08b' */
+/*        group by kind; */
 
-       -- TODO update bag with kind_counts_json
+/*        select jsonb_object_agg(kind, item_count) into kind_counts_json */
+/*        from kind_counts_rows; */
 
-        /* IF (TG_OP = 'UPDATE') THEN */
-        /*     -- implement for multiple bags in the update */
-        /*     -- TODO select bag for update first */
-        /*     UPDATE bags SET */
-        /*     INSERT INTO emp_audit */
-        /*         SELECT 'U', now(), user, 'whatever', sum(n.salary) FROM new_table n; */
-        /* ELSIF (TG_OP = 'INSERT') THEN */
-        /*     INSERT INTO emp_audit */
-        /*         SELECT 'I', now(), user, 'whatever', sum(n.salary) FROM new_table n; */
-        /* END IF; */
-        RETURN NULL; -- result is ignored since this is an AFTER trigger
-    END;
-$$ LANGUAGE plpgsql;
+/*        -- TODO update bag with kind_counts_json */
 
-DROP TRIGGER IF EXISTS bag_items_update ON items;
-CREATE TRIGGER bag_items_update
-    AFTER INSERT ON items
-    REFERENCING NEW TABLE AS new_table
-    FOR EACH STATEMENT EXECUTE FUNCTION bag_items_count();
+/*         /1* IF (TG_OP = 'UPDATE') THEN *1/ */
+/*         /1*     -- implement for multiple bags in the update *1/ */
+/*         /1*     -- TODO select bag for update first *1/ */
+/*         /1*     UPDATE bags SET *1/ */
+/*         /1*     INSERT INTO emp_audit *1/ */
+/*         /1*         SELECT 'U', now(), user, 'whatever', sum(n.salary) FROM new_table n; *1/ */
+/*         /1* ELSIF (TG_OP = 'INSERT') THEN *1/ */
+/*         /1*     INSERT INTO emp_audit *1/ */
+/*         /1*         SELECT 'I', now(), user, 'whatever', sum(n.salary) FROM new_table n; *1/ */
+/*         /1* END IF; *1/ */
+/*         RETURN NULL; -- result is ignored since this is an AFTER trigger */
+/*     END; */
+/* $$ LANGUAGE plpgsql; */
+
+/* DROP TRIGGER IF EXISTS bag_items_update ON items; */
+/* CREATE TRIGGER bag_items_update */
+/*     AFTER INSERT ON items */
+/*     REFERENCING NEW TABLE AS new_table */
+/*     FOR EACH STATEMENT EXECUTE FUNCTION bag_items_count(); */
 
 -- TODO add UPDATE and DELETE
