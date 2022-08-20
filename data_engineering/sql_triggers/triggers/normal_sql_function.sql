@@ -1,4 +1,6 @@
 -- SQL to paste into the CLI and experiment with
+
+
 CREATE OR REPLACE FUNCTION bag_items_count() RETURNS TRIGGER AS $$
     BEGIN
         /* IF (TG_OP = 'DELETE') THEN */

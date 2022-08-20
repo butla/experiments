@@ -7,14 +7,17 @@ run: _run migrate
 
 check: test static_checks
 
-db_enter:
+db_cli:
 	PGPASSWORD=secret pgcli -h localhost -d postgres -p 5432 -U postgres
+
+clean:
+	fd --hidden --follow --exclude .git --no-ignore __pycache__ --exec rm -rf
 
 # SECONDARY commands
 # =========================
 
 test:
-	poetry run pytest -v triggers/test_triggers.py
+	poetry run pytest -v tests
 
 static_checks:
 	poetry run pylint triggers

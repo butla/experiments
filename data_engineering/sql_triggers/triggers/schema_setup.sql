@@ -1,10 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE IF NOT EXISTS bags(
-    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    item_kind_counts JSONB DEFAULT '{}'
-);
-
+-- ===== TYPE DEFINITIONS =====
 -- create type if it doesn't exist
 DO $$ BEGIN
     IF to_regtype('item_kind') IS NULL THEN
@@ -14,12 +10,52 @@ DO $$ BEGIN
     END IF;
 END $$;
 
+-- ===== TABLE DEFINITIONS =====
+CREATE TABLE IF NOT EXISTS bags(
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    item_kind_counts JSONB DEFAULT '{}'
+);
+
+
 CREATE TABLE IF NOT EXISTS items(
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     kind item_kind,
     bag_id uuid REFERENCES bags (id)
 );
 
+-- ===== FUNCTION DEFINITIONS =====
+-- Related doc links:
+-- https://www.postgresql.org/docs/current/plpgsql-declarations.html
+-- https://www.postgresql.org/docs/current/plpgsql-statements.html#PLPGSQL-STATEMENTS-ASSIGNMENT
+-- https://www.postgresql.org/docs/current/functions-aggregate.html
+
+
+CREATE OR REPLACE FUNCTION bag_items_count(bag_id_to_count uuid) RETURNS jsonb AS $$
+DECLARE
+    item_changes jsonb;
+BEGIN
+    SELECT json_object_agg(kind_counts.kind, kind_counts.count_of_kind) INTO STRICT item_changes
+    FROM (
+       SELECT kind, count(*) AS count_of_kind
+       FROM items
+       WHERE bag_id = bag_id_to_count
+       GROUP BY kind
+    ) AS kind_counts;
+    RETURN item_changes;
+
+    -- TODO do it with intermediary vars
+    /* -- TODO kind_counts_rows variable definition? */
+    /* SELECT kind, count(*) AS item_count INTO kind_counts_rows */
+    /* FROM items */
+    /* WHERE bag_id = bag_id_to_count */
+    /* GROUP BY kind; */
+
+    /* SELECT jsonb_object_agg(kind_counts.kind, kind_counts.count_of_kind) INTO STRICT item_changes */
+    /* FROM kind_counts_rows; */
+
+    /* RETURN item_changes; */
+END;
+$$ LANGUAGE plpgsql;
 /* CREATE OR REPLACE FUNCTION bag_items_count() RETURNS TRIGGER AS $$ */
 /*     BEGIN */
 /*         /1* IF (TG_OP = 'DELETE') THEN *1/ */
