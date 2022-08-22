@@ -32,6 +32,8 @@ CREATE TABLE IF NOT EXISTS items(
 
 CREATE OR REPLACE FUNCTION bag_items_count(bag_id_to_count uuid) RETURNS jsonb AS $$
 DECLARE
+    -- I wanted to have variables for the sub-select results, but apparently, they don't exist.
+    -- https://stackoverflow.com/questions/24949266/select-multiple-rows-and-columns-into-a-record-variable
     item_changes jsonb;
 BEGIN
     SELECT json_object_agg(kind_counts.kind, kind_counts.count_of_kind) INTO STRICT item_changes
@@ -42,20 +44,9 @@ BEGIN
        GROUP BY kind
     ) AS kind_counts;
     RETURN item_changes;
-
-    -- TODO do it with intermediary vars
-    /* -- TODO kind_counts_rows variable definition? */
-    /* SELECT kind, count(*) AS item_count INTO kind_counts_rows */
-    /* FROM items */
-    /* WHERE bag_id = bag_id_to_count */
-    /* GROUP BY kind; */
-
-    /* SELECT jsonb_object_agg(kind_counts.kind, kind_counts.count_of_kind) INTO STRICT item_changes */
-    /* FROM kind_counts_rows; */
-
-    /* RETURN item_changes; */
 END;
 $$ LANGUAGE plpgsql;
+
 /* CREATE OR REPLACE FUNCTION bag_items_count() RETURNS TRIGGER AS $$ */
 /*     BEGIN */
 /*         /1* IF (TG_OP = 'DELETE') THEN *1/ */
