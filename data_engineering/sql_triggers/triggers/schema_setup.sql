@@ -36,13 +36,15 @@ DECLARE
     -- https://stackoverflow.com/questions/24949266/select-multiple-rows-and-columns-into-a-record-variable
     item_changes jsonb;
 BEGIN
-    SELECT json_object_agg(kind_counts.kind, kind_counts.count_of_kind) INTO STRICT item_changes
-    FROM (
+    WITH kind_counts AS (
        SELECT kind, count(*) AS count_of_kind
        FROM items
        WHERE bag_id = bag_id_to_count
        GROUP BY kind
-    ) AS kind_counts;
+    )
+    SELECT json_object_agg(kind_counts.kind, kind_counts.count_of_kind) INTO STRICT item_changes
+    FROM kind_counts;
+
     RETURN item_changes;
 END;
 $$ LANGUAGE plpgsql;
