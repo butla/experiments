@@ -49,52 +49,36 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-/* CREATE OR REPLACE FUNCTION bag_items_count() RETURNS TRIGGER AS $$ */
-/*     BEGIN */
-/*         /1* IF (TG_OP = 'DELETE') THEN *1/ */
-/*         /1*     INSERT INTO emp_audit *1/ */
-/*         /1*         SELECT 'D', now(), user, o.* FROM old_table o; *1/ */
-/*        -- Source of the trick https://stackoverflow.com/a/34680345/2252728 */
+-- ===== TRIGGER STUFF, WIP =====
 
-/*        -- TODO handle inserts into multiple bags */
-/*        -- TODO SELECT X INTO */
-/*        SELECT json_object_agg(kind_counts.kind, kind_counts.count_of_kind) INTO STRICT item_changes */
-/*        FROM ( */
-/*         SELECT kind, count(*) AS count_of_kind */
-/*         FROM items */
-/*         WHERE group_id = 'e9a3f436-b03f-4ced-9e4a-1b0590c6c08b' */
-/*         GROUP BY kind */
-/*        ) AS kind_counts; */
+CREATE OR REPLACE FUNCTION bag_items_count_trigger() RETURNS TRIGGER AS $$
+DECLARE
+    -- I wanted to have variables for the sub-select results, but apparently, they don't exist.
+    -- https://stackoverflow.com/questions/24949266/select-multiple-rows-and-columns-into-a-record-variable
+    item_changes jsonb;
+BEGIN
+    -- TODO select bag for update
+    -- TODO handle inserts into multiple bags
+    IF (TG_OP = 'UPDATE') THEN
+      WITH kind_counts AS (
+         SELECT kind, count(*) AS count_of_kind
+         FROM items
+         WHERE bag_id = bag_id_to_count
+         GROUP BY kind
+      )
+      SELECT json_object_agg(kind_counts.kind, kind_counts.count_of_kind) INTO STRICT item_changes
+      FROM kind_counts;
+    ELSIF (TG_OP = 'INSERT') THEN
+    ELSIF (TG_OP = 'DELETE') THEN
+    END IF;
 
-/*        -- version with more intermittent vars */
-/*        select kind, count(*) as item_count into kind_counts_rows */
-/*        from items */
-/*        where group_id = 'e9a3f436-b03f-4ced-9e4a-1b0590c6c08b' */
-/*        group by kind; */
+    RETURN NULL;  -- result is ignored since this is an AFTER trigger
+END;
+$$ LANGUAGE plpgsql;
 
-/*        select jsonb_object_agg(kind, item_count) into kind_counts_json */
-/*        from kind_counts_rows; */
 
-/*        -- TODO update bag with kind_counts_json */
-
-/*         /1* IF (TG_OP = 'UPDATE') THEN *1/ */
-/*         /1*     -- implement for multiple bags in the update *1/ */
-/*         /1*     -- TODO select bag for update first *1/ */
-/*         /1*     UPDATE bags SET *1/ */
-/*         /1*     INSERT INTO emp_audit *1/ */
-/*         /1*         SELECT 'U', now(), user, 'whatever', sum(n.salary) FROM new_table n; *1/ */
-/*         /1* ELSIF (TG_OP = 'INSERT') THEN *1/ */
-/*         /1*     INSERT INTO emp_audit *1/ */
-/*         /1*         SELECT 'I', now(), user, 'whatever', sum(n.salary) FROM new_table n; *1/ */
-/*         /1* END IF; *1/ */
-/*         RETURN NULL; -- result is ignored since this is an AFTER trigger */
-/*     END; */
-/* $$ LANGUAGE plpgsql; */
-
-/* DROP TRIGGER IF EXISTS bag_items_update ON items; */
-/* CREATE TRIGGER bag_items_update */
-/*     AFTER INSERT ON items */
-/*     REFERENCING NEW TABLE AS new_table */
-/*     FOR EACH STATEMENT EXECUTE FUNCTION bag_items_count(); */
-
--- TODO add UPDATE and DELETE
+DROP TRIGGER IF EXISTS bag_items_update ON items;
+CREATE TRIGGER bag_items_update
+    AFTER INSERT ON items
+    REFERENCING NEW TABLE AS new_table
+    FOR EACH STATEMENT EXECUTE FUNCTION bag_items_count();
