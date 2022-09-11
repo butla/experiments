@@ -1,9 +1,10 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
 
+from .apps import PollsConfig
 from .models import Choice, Question
 
 
@@ -34,6 +35,12 @@ class ResultsView(generic.DetailView):
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
+
+    # TODO why does this not work?
+    # app: PollsConfig = request.current_app
+    # app.app_object_bla += ' | one more vote cast'
+    # print("========== XXXXX srakator", app.app_object_bla, '===========================')
+
     try:
         chosen_answer_id = request.POST['choice']
         selected_choice = question.choice_set.get(pk=chosen_answer_id)
