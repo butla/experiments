@@ -10,9 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
-import coverage
 import os
 
+import coverage
 
 # This will only do something when COVERAGE_PROCESS_START environment variable is set.
 # It's before all function declarations so that they are indexed properly.
@@ -117,8 +117,6 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
-
-USE_L10N = True
 
 USE_TZ = True
 
