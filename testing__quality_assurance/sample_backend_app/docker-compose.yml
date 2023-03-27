@@ -1,27 +1,21 @@
 ---
-version: '2'
+version: '3'
 services:
+
   api:
-    build: ..
-    image: awesome_server
+    build:
+      context: .
+    image: sample_backend
     ports:
-      - "8080"
+      - "8080:8080"
     links:
       - database
     environment:
-      - REDIS_PORT=6379
-      - REDIS_HOST=database
+      - POSTGRES_HOST=database
+
   database:
-    image: redis:5.0-alpine
+    image: postgres:15.2
     ports:
-      - "6379"
-  waiter:
-    image: butla/contaiwaiter
-    ports:
-      - "8080"
-    links:
-      - api
-      - database
+      - "5432:5432"
     environment:
-      - URLS=http://api:8080
-      - REDIS_HOSTNAMES=database
+      - POSTGRES_PASSWORD=postgres

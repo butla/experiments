@@ -11,6 +11,9 @@ packages = [{include = "sample_backend_app"}]
 python = "^3.10"
 fastapi = "^0.95.0"
 uvicorn = "^0.21.1"
+sqlalchemy = "^2.0.7"
+psycopg = {extras = ["binary"], version = "^3.1.8"}
+tenacity = "^8.2.2"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -22,6 +25,7 @@ isort = "^5.12.0"
 mypy = "^1.1.1"
 black = "^23.1.0"
 ptpython = "^3.0.23"
+alembic = "^1.10.2"
 
 [tool.isort]
 # https://pycqa.github.io/isort/docs/configuration/options.html#force-sort-within-sections

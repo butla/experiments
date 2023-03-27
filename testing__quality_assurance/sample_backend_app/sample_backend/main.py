@@ -1,11 +1,15 @@
 import fastapi
 
-# TODO SQL DB - don't run anything on import
+from . import services
+
 # TODO notes API with CRD, where D only marks stuff as deleted
-# https://docs.sqlalchemy.org/en/20/orm/extensions/asyncio.html#synopsis-orm
-# psycopg3 usage: db_string = "postgresql+psycopg://user:password@db/psycoptest"
 
 app = fastapi.FastAPI()
+
+
+@app.on_event("startup")
+async def startup():
+    services.init()
 
 
 @app.get("/")

@@ -1,5 +1,5 @@
-import pytest
 from awesome_server.server import create_app
+import pytest
 
 
 @pytest.fixture
@@ -13,9 +13,9 @@ async def _fake_save(_):
 
 
 async def test_hello_works(app_client):
-    name = 'Wieńczysław'
-    response = await app_client.get(f'/hello/{name}')
+    name = "Wieńczysław"
+    response = await app_client.get(f"/hello/{name}")
 
     assert response.status == 200
     response_json = await response.json()
-    assert name in response_json['greeting']
+    assert name in response_json["greeting"]

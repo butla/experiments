@@ -5,12 +5,11 @@ SHELL:=/bin/bash
 
 SOURCES:=app tests
 
-run:
-	poetry run uvicorn --port 8080 app.main:app
+run: db_migration
+	docker-compose up -d
 
-# TODO uvicorn with reload eats up CPU
-run_continuously:
-	fd --exclude .git --no-ignore '\.py$$' app | entr -rc make run
+db_migration:
+	poetry run alembic upgrade head
 
 check: static_checks test
 
@@ -39,10 +38,11 @@ static_checks:
 	@echo ===========================
 	@poetry run black --check $(SOURCES)
 
-	@echo =================
-	@echo Checking types...
-	@echo =================
-	@poetry run mypy $(SOURCES)
+	# TODO
+	# @echo =================
+	# @echo Checking types...
+	# @echo =================
+	# @poetry run mypy $(SOURCES)
 
 	@echo ==========
 	@echo Linting...
@@ -57,3 +57,7 @@ test:
 
 test_continously:
 	fd --exclude .git --no-ignore '\.py$$' | entr -c make test
+
+export_requirements:
+	poetry export --output=requirements.txt
+

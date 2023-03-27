@@ -1,16 +1,12 @@
 FROM python:3.10-alpine
 
-ENV PORT 8080
-EXPOSE ${PORT}
+EXPOSE 8080
 
 WORKDIR /app
 
-RUN pip install pipenv
-ADD Pipfile.lock /app/
-# this is only needed because of a bug in pipenv
-ADD Pipfile /app/
-RUN pipenv sync
+COPY requirements.txt /app/
+RUN pip install -r requirements.txt
 
-ADD awesome_server /app/awesome_server
+COPY sample_backend /app/sample_backend
 
-CMD ["pipenv", "run", "python", "-m", "awesome_server.server"]
+CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8080", "sample_backend.main:app"]
