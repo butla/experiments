@@ -17,8 +17,18 @@ async def hello():
     return {"Hello": "World"}
 
 
-@app.get("/{path_param}")
-async def with_params(path_param: int, query_param: str):
+@app.get("/notes")
+async def get_all_notes():
+    return {"Hello": "World"}
+
+
+@app.get("/notes/{note_id}")
+async def get_all_notes(node_id: int):
+    return {"Hello": "World"}
+
+
+@app.post("/{path_param}")
+async def new_note(path_param: int, query_param: str):
     return {
         "path": path_param,
         "query_param": query_param,
