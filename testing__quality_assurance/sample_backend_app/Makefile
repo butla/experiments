@@ -8,6 +8,7 @@ SOURCES:=sample_backend tests
 
 # MAIN COMMANDS
 # ==============
+
 setup_development:
 	poetry install
 
@@ -25,21 +26,17 @@ format:
 	@echo "=== Sorting imports... ==="
 	@poetry run isort $(SOURCES)
 
+# UTILITY COMMANDS
+# ================
+
 rebuild_images:
 	docker-compose build
 
 wipe_data:
 	docker-compose down -v
 
-# ADDITIONAL COMMANDS
-# ===================
-db_migration:
-	@echo "=== Running DB migrations... ==="
-	poetry run alembic upgrade head
-
-_start_compose:
-	@echo "=== Starting Docker Compose... ==="
-	docker-compose up -d
+show_api_documentation:
+	xdg-open http://localhost:8080/docs
 
 shell:
 	poetry run ptpython
@@ -50,6 +47,18 @@ db_shell:
 docker_app_shell:
 	docker exec -it sample_backend_app-api-1 sh
 
+export_requirements:
+	poetry export --output=requirements.txt
+
+# SUBCOMMANDS
+# ===========
+db_migration:
+	@echo "=== Running DB migrations... ==="
+	poetry run alembic upgrade head
+
+_start_compose:
+	@echo "=== Starting Docker Compose... ==="
+	docker-compose up -d
 
 static_checks:
 	@echo === Checking import sorting... ===
@@ -72,6 +81,3 @@ test:
 # TODO this conflicts with run_with_restarts, as the container goes down for a moment
 test_continously:
 	fd --exclude .git --no-ignore '\.py$$' | entr -c make test
-
-export_requirements:
-	poetry export --output=requirements.txt
