@@ -26,6 +26,10 @@ mypy = "^1.1.1"
 black = "^23.1.0"
 ptpython = "^3.0.23"
 alembic = "^1.10.2"
+pytest-asyncio = "^0.21.0"
+pgcli = "^3.5.0"
+pylint-pytest = "^1.1.2"
+httpx = "^0.23.3"
 
 [tool.isort]
 # https://pycqa.github.io/isort/docs/configuration/options.html#force-sort-within-sections
@@ -35,6 +39,9 @@ profile = "black"
 
 [tool.black]
 line_length = 120
+
+[tool.pylint.master]
+load-plugins = "pylint_pytest"
 
 [tool.pylint.format]
 max-line-length = 120

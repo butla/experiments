@@ -1,0 +1,9 @@
+---
+version: '3'
+
+services:
+
+  api:
+    # Helps with development by mounting the code directly into the container.
+    volumes:
+      - ./sample_backend/:/app/sample_backend/

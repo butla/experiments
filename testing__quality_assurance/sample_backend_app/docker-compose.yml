@@ -1,5 +1,6 @@
 ---
 version: '3'
+
 services:
 
   api:
@@ -19,3 +20,11 @@ services:
       - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=postgres
+    # defining a volume, so that the data is persistent between restarts
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    # The container logs will hold all SQL statements executed.
+    command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+
+volumes:
+  database-data:
