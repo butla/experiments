@@ -29,7 +29,7 @@ format:
 # UTILITY COMMANDS
 # ================
 
-rebuild_images:
+rebuild_images: export_requirements
 	docker-compose build
 
 wipe_data:
@@ -46,9 +46,6 @@ db_shell:
 
 docker_app_shell:
 	docker exec -it sample_backend_app-api-1 sh
-
-export_requirements:
-	poetry export --output=requirements.txt
 
 # SUBCOMMANDS
 # ===========
@@ -73,11 +70,15 @@ static_checks:
 	@echo === Checking types... ===
 	@poetry run mypy $(SOURCES)
 
-
 test:
 	@echo === Running tests... ===
 	@poetry run pytest tests
 
-# TODO this conflicts with run_with_restarts, as the container goes down for a moment
+# TODO this conflicts with run_with_restarts, as the container goes down for a moment.
+# Using reload from uvicorn would conflict as well.
+# Have a fixture something that waits for the API to become available.
 test_continously:
 	fd --exclude .git --no-ignore '\.py$$' | entr -c make test
+
+export_requirements:
+	poetry export --output=requirements.txt
