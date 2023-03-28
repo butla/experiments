@@ -1,9 +1,13 @@
+# all variables will be exported to child processes
 .EXPORT_ALL_VARIABLES:
 
 # So we're sure what shell we're using.
 SHELL:=/bin/bash
 
 SOURCES:=app tests
+
+setup_development:
+	poetry install
 
 run: db_migration
 	docker-compose up -d

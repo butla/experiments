@@ -5,7 +5,7 @@ description = "A sample backend app used to illustrate testing and development t
 authors = ["Michal Bultrowicz <michal.bultrowicz@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "sample_backend_app"}]
+packages = [{include = "sample_backend"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
