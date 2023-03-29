@@ -30,6 +30,7 @@ pytest-asyncio = "^0.21.0"
 pgcli = "^3.5.0"
 pylint-pytest = "^1.1.2"
 httpx = "^0.23.3"
+tenacity = "^8.2.2"
 
 [tool.isort]
 # https://pycqa.github.io/isort/docs/configuration/options.html#force-sort-within-sections

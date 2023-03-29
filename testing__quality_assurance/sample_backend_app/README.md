@@ -11,6 +11,13 @@ Most of the commands are in the Makefile
 
 Creating a migration: `poetry run alembic revision --autogenerate -m <message>`
 
+## Demonstrated techniques
+
+- integrated and external (functional) tests with Docker Compose
+- reloading app Docker on code changes (`make run_reloading`)
+- running tests on code changes (`make test_reloading`)
+- ...others...
+
 ## TODOs
 
 - make `mypy` pass

@@ -43,7 +43,7 @@ def run_migrations_online() -> None:
             context.run_migrations()
 
 
-@tenacity.retry(stop=tenacity.stop_after_delay(10), wait=tenacity.wait_fixed(0.2))
+@tenacity.retry(stop=tenacity.stop_after_delay(10), wait=tenacity.wait_fixed(0.2), reraise=True)
 def _wait_for_postgres(sql_engine):
     """
     """

@@ -15,7 +15,7 @@ setup_development:
 run: _start_compose db_migration
 
 # You need to restart this command after adding new files
-run_with_restarts: run
+run_reloading: run
 	fd --exclude .git --no-ignore '\.py$$' sample_backend | entr -c make _start_compose
 
 check: static_checks test
@@ -74,10 +74,7 @@ test:
 	@echo === Running tests... ===
 	@poetry run pytest tests
 
-# TODO this conflicts with run_with_restarts, as the container goes down for a moment.
-# Using reload from uvicorn would conflict as well.
-# Have a fixture something that waits for the API to become available.
-test_continously:
+test_reloading:
 	fd --exclude .git --no-ignore '\.py$$' | entr -c make test
 
 export_requirements:
