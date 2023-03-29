@@ -27,7 +27,7 @@ def run_migrations_online() -> None:
 
     """
     sql_engine = sqlalchemy.create_engine(
-        sample_backend.config.Config().postgres_url,
+        sample_backend.config.AppConfig().postgres_url,
         poolclass=sqlalchemy.pool.NullPool,
     )
 

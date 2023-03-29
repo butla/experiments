@@ -2,20 +2,20 @@
 This is a sample external tests' file.
 """
 
-import os
 import uuid
 
 import httpx
 import pytest
 import tenacity
 
+from tests.config import TestsConfig
+
 
 # Scope is session, so that this fixture runs only once during the test suite.
 # If we'd have more tests, we don't need to go through waiting for the app again.
 @pytest.fixture(scope="session")
 def app_url():
-    app_port = os.environ.get("API_PORT", 8080)
-    app_address = f"http://localhost:{app_port}"
+    app_address = f"http://localhost:{TestsConfig().api_port}"
     _wait_for_http_url(app_address)
     return app_address
 

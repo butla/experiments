@@ -23,6 +23,8 @@ Creating a migration: `poetry run alembic revision --autogenerate -m <message>`
 ## TODOs
 
 - make `mypy` pass
+- pytest: stop trying to interpret TestsConfig as a test class
+  - https://docs.pytest.org/en/7.1.x/example/pythoncollection.html
 - show coverage measurements from docker in external tests
 - show that I don't normally do downgrade migrations
 - external tests should wait for the API to become available to enable testing with reloads

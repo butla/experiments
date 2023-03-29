@@ -1,7 +1,7 @@
 from pydantic import BaseSettings
 
 
-class Config(BaseSettings):
+class AppConfig(BaseSettings):
     postgres_host: str = "localhost"
     postgres_password: str = "postgres"
     postgres_database: str = "postgres"

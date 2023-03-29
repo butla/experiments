@@ -5,11 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.sql import expression
 
-from sample_backend.config import Config
+from sample_backend.config import AppConfig
 
 
 def make_db_session_creator() -> async_sessionmaker[AsyncSession]:
-    engine = create_async_engine(Config().postgres_url)
+    engine = create_async_engine(AppConfig().postgres_url)
     # Don't expire objects when a commit is made.
     # Expired objects need to be refreshed from the DB.
     # With this we can get the IDs of freshly inserted objects without additional DB interactions,

@@ -1,4 +1,4 @@
-# all variables will be exported to child processes
+# All variables will be exported to child processes. Can be useful later.
 .EXPORT_ALL_VARIABLES:
 
 # So we're sure what shell we're using.
