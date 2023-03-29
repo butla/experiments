@@ -57,25 +57,30 @@ _start_compose:
 	@echo "=== Starting Docker Compose... ==="
 	docker-compose up -d
 
-static_checks:
-	@echo === Checking import sorting... ===
-	@poetry run isort -c $(SOURCES)
-
-	@echo === Checking code formatting... ===
-	@poetry run black --check $(SOURCES)
-
-	@echo === Linting... ===
-	@poetry run pylint $(SOURCES)
-
-	@echo === Checking types... ===
-	@poetry run mypy $(SOURCES)
-
 test:
 	@echo === Running tests... ===
 	@poetry run pytest tests
 
 test_reloading:
 	fd --exclude .git --no-ignore '\.py$$' | entr -c make test
+
+static_checks: _check_isort _check_format _check_linter _check_types
+
+_check_isort:
+	@echo === Checking import sorting... ===
+	@poetry run isort -c $(SOURCES)
+
+_check_format:
+	@echo === Checking code formatting... ===
+	@poetry run black --check $(SOURCES)
+
+_check_linter:
+	@echo === Linting... ===
+	@poetry run pylint $(SOURCES)
+
+_check_types:
+	@echo === Checking types... ===
+	@poetry run mypy $(SOURCES)
 
 export_requirements:
 	poetry export --output=requirements.txt
