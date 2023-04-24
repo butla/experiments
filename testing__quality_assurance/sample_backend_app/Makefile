@@ -16,7 +16,7 @@ run: _start_compose db_migration
 
 # You need to restart this command after adding new files
 run_reloading: run
-	fd --exclude .git --no-ignore '\.py$$' sample_backend | entr -c make _start_compose
+	fd --exclude .git --no-ignore '\.py$$' sample_backend | entr -c docker compose restart api
 
 check: static_checks test
 
@@ -30,10 +30,10 @@ format:
 # ================
 
 rebuild_images: export_requirements
-	docker-compose build
+	docker compose build
 
 wipe_data:
-	docker-compose down -v
+	docker compose down -v
 
 show_api_documentation:
 	xdg-open http://localhost:8080/docs
@@ -55,7 +55,7 @@ db_migration:
 
 _start_compose:
 	@echo "=== Starting Docker Compose... ==="
-	docker-compose up -d
+	docker compose up -d
 
 test:
 	@echo === Running tests... ===
