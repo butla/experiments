@@ -14,10 +14,6 @@ setup_development:
 
 run: _start_compose db_migration
 
-# You need to restart this command after adding new files
-run_reloading: run
-	fd --exclude .git --no-ignore '\.py$$' sample_backend | entr -c docker compose restart api
-
 check: static_checks test
 
 format:
@@ -29,10 +25,10 @@ format:
 # UTILITY COMMANDS
 # ================
 
-rebuild_images: export_requirements
+build_docker: export_requirements
 	docker compose build
 
-wipe_data:
+destroy:
 	docker compose down -v
 
 show_api_documentation:
@@ -52,6 +48,15 @@ docker_app_shell:
 db_migration:
 	@echo "=== Running DB migrations... ==="
 	poetry run alembic upgrade head
+
+# Usage make make_migration MESSAGE="<a message>"
+make_migration:
+	@echo "=== Autogenerating DB migrations... ==="
+	poetry run alembic revision --autogenerate -m "$(MESSAGE)"
+
+
+export_requirements:
+	poetry export --output=requirements.txt
 
 _start_compose:
 	@echo "=== Starting Docker Compose... ==="
@@ -81,6 +86,3 @@ _check_linter:
 _check_types:
 	@echo === Checking types... ===
 	@poetry run mypy $(SOURCES)
-
-export_requirements:
-	poetry export --output=requirements.txt

@@ -16,6 +16,8 @@ from . import api_schemas
 from .db import Note
 
 
+# TODO have a function that returns a DB session. Multiple objects should reuse the same session.
+# It should be put in a contextvar.
 class NotesRepository:
     def __init__(self, db_session_creator: async_sessionmaker[AsyncSession]):
         self._db_session_creator = db_session_creator
