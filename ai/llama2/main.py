@@ -1,11 +1,17 @@
+from pathlib import Path
 from pprint import pprint
 
 from llama_cpp import Llama
 
 
 def main():
-    llm = Llama(model_path="./models/7B/llama-model.gguf")
-    pprint(llm("Q: Name the planets in the solar system? A: ", max_tokens=32, stop=["Q:", "\n"], echo=True))
+    llm = Llama(model_path=str(Path("~/Downloads/codellama-13b.Q6_K.gguf").expanduser()))
+
+    prompt = input('\n\n=== Prompt for LLAMA2:\n')
+    query_result = llm(f'Q: {prompt} A: ', max_tokens=300, stop=["Q:", "\n"], echo=True)
+    for index, choice in enumerate(query_result['choices']):
+        print('CHOICE', index, ':')
+        pprint(choice['text'])
 
 
 if __name__ == "__main__":
