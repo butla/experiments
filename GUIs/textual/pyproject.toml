@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "textual-demo"
+version = "0.1.0"
+description = "My experiments with textual GUIs"
+authors = ["Michal Bultrowicz <michal.bultrowicz@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+textual = "^0.55.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
